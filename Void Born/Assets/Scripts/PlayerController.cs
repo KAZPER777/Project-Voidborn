@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private int jumpsAmount;
 
     public bool isMoving;
+    public bool isRunning;
 
     //Character Controller Component
     public CharacterController controller;
@@ -29,7 +30,7 @@ public class PlayerController : MonoBehaviour
 
 
     //physics based movement
-    Vector3 moveDir;
+   public Vector3 moveDir;
     Vector3 playerVel;
     
     
@@ -54,13 +55,19 @@ public class PlayerController : MonoBehaviour
         Movement();
         Sprint();
         Jump();
-        isMoving = moveDir != Vector3.zero;
-
+        
+       
+        cameraAnimator.SetFloat("Speed", moveDir.magnitude);
     }
 
     public bool IsMoving()
     {
         return isMoving;
+    }
+
+    public bool IsRunning()
+    {
+        return isRunning;
     }
 
     private void Movement()
@@ -70,7 +77,7 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
 
-
+        isMoving = moveDir != Vector3.zero;
 
     }
 
@@ -92,12 +99,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift) && walkSpeed < sprintMax)
         {
             walkSpeed *= sprintMult;
-
+            isRunning = true;
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             walkSpeed /= sprintMult;
-
+            isRunning = false;
         }
     }
 

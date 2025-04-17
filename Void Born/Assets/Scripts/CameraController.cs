@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     public Animator cameraAnimation;
 
     private const string IS_MOVING = "IsMoving";
+    private const string IS_RUNNING = "IsRunning";
 
 
 
@@ -36,15 +37,8 @@ public class CameraController : MonoBehaviour
     {
 
         CameraMovement();
-
-        if(player.isMoving)
-        {
-            cameraAnimation.SetBool(IS_MOVING, player.isMoving);
-        }
-        else
-        {
-            cameraAnimation.SetBool(IS_MOVING, player.isMoving);
-        }
+        PlayerMoving();
+        PlayerRunning();
 
         if (cameraBob && player.isMoving)
         {
@@ -52,6 +46,30 @@ public class CameraController : MonoBehaviour
             CameraBobbing();
         }
 
+    }
+
+    private void PlayerMoving()
+    {
+        if (player.isMoving)
+        {
+            cameraAnimation.SetBool(IS_MOVING, player.isMoving);
+        }
+        else
+        {
+            cameraAnimation.SetBool(IS_MOVING, player.isMoving);
+        }
+    }
+
+    private void PlayerRunning()
+    {
+        if (player.isMoving && player.isRunning)
+        {
+            cameraAnimation.SetBool(IS_RUNNING, player.isRunning);
+        }
+        else
+        {
+            cameraAnimation.SetBool(IS_RUNNING, player.isRunning);
+        }
     }
 
     //Controlls camera movement (might switch it to public because there may be a mechanic altering this)
