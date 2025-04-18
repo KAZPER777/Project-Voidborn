@@ -5,6 +5,7 @@ public class CameraController : MonoBehaviour
 {
     public PlayerController player;
     [SerializeField] CharacterController controller;
+    [SerializeField] private Transform yawTarget;
 
     //Animator
     public Animator cameraAnimation;
@@ -31,7 +32,6 @@ public class CameraController : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        cameraAnimation = GetComponent<Animator>();
        
 
     }
@@ -99,7 +99,7 @@ public class CameraController : MonoBehaviour
 
         rotX = Mathf.Clamp(rotX, -90, 90);
         transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
-        transform.parent.Rotate(Vector3.up * mouseX);
+        yawTarget.Rotate(Vector3.up * mouseX);
     }
 
     public void CameraBobbing()
@@ -114,7 +114,8 @@ public class CameraController : MonoBehaviour
         {
             cameraAnimation.SetBool(IS_LEANING_LEFT, true);
             cameraAnimation.SetBool(IS_LEANING_RIGHT, false);
-        } else if (Input.GetButton("Lean Right"))
+        } 
+        else if (Input.GetButton("Lean Right"))
         {
             cameraAnimation.SetBool(IS_LEANING_LEFT, false);
             cameraAnimation.SetBool(IS_LEANING_RIGHT, true);
