@@ -11,6 +11,10 @@ public class CameraController : MonoBehaviour
 
     private const string IS_MOVING = "IsMoving";
     private const string IS_RUNNING = "IsRunning";
+    private const string IS_LEANING_LEFT = "IsLeaningLeft";
+    private const string IS_LEANING_RIGHT = "IsLeaningRight";
+    private const string IS_CROUCHING = "IsCrouching";
+    private const string IS_CRAWLING = "IsCrawling";
 
 
 
@@ -39,6 +43,7 @@ public class CameraController : MonoBehaviour
         CameraMovement();
         PlayerMoving();
         PlayerRunning();
+        HandleLeaning();
 
         if (cameraBob && player.isMoving)
         {
@@ -54,10 +59,6 @@ public class CameraController : MonoBehaviour
         {
             cameraAnimation.SetBool(IS_MOVING, player.isMoving);
         }
-        else
-        {
-            cameraAnimation.SetBool(IS_MOVING, player.isMoving);
-        }
     }
 
     private void PlayerRunning()
@@ -66,9 +67,21 @@ public class CameraController : MonoBehaviour
         {
             cameraAnimation.SetBool(IS_RUNNING, player.isRunning);
         }
-        else
+    }
+
+    private void PlayerCrouching()
+    {
+        if (player.isCrouching)
         {
-            cameraAnimation.SetBool(IS_RUNNING, player.isRunning);
+            cameraAnimation.SetBool(IS_CROUCHING, player.isCrouching);
+        }
+    }
+
+    private void PlayerCrawling()
+    {
+        if (player.isCrawling)
+        {
+            cameraAnimation.SetBool(IS_CRAWLING, player.isCrawling);
         }
     }
 
@@ -86,12 +99,29 @@ public class CameraController : MonoBehaviour
 
         rotX = Mathf.Clamp(rotX, -90, 90);
         transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
-        transform.parent.parent.Rotate(Vector3.up * mouseX);
+        transform.parent.Rotate(Vector3.up * mouseX);
     }
 
     public void CameraBobbing()
     {
         
         
+    }
+
+    public void HandleLeaning()
+    {
+        if (Input.GetButton("Lean Left"))
+        {
+            cameraAnimation.SetBool(IS_LEANING_LEFT, true);
+            cameraAnimation.SetBool(IS_LEANING_RIGHT, false);
+        } else if (Input.GetButton("Lean Right"))
+        {
+            cameraAnimation.SetBool(IS_LEANING_LEFT, false);
+            cameraAnimation.SetBool(IS_LEANING_RIGHT, true);
+        } else
+        {
+            cameraAnimation.SetBool(IS_LEANING_LEFT, false);
+            cameraAnimation.SetBool(IS_LEANING_RIGHT, false);
+        }
     }
 }
