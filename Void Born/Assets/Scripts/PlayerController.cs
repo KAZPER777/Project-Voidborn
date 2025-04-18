@@ -1,64 +1,57 @@
-using System.Collections;
-using System.Data;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    //Player Movement
-    [SerializeField, Range(3f, 7f)] private float walkSpeed;
-    [SerializeField, Range(1.1f, 3f)] private float sprintMult;
-    [SerializeField, Range(8f, 14f)] private float sprintMax;
+    [Header("Movement Settings")]
+    [SerializeField, Range(3f, 7f)] private float walkSpeed = 5f;
+    [SerializeField, Range(1.1f, 3f)] private float sprintMult = 1.5f;
+    [SerializeField, Range(8f, 14f)] private float sprintMax = 10f;
     [SerializeField, Range(0.1f, 5f)] private float crouchSpeed = 2f;
     [SerializeField, Range(0.1f, 2f)] private float crawlSpeed = 1f;
 
-    private float baseWalkSpeed = 5f;
+    private float baseWalkSpeed;
 
-    //Player Jumping (incase we add it anyway)
-    [SerializeField] private int jumpHeight;
-    [SerializeField] private float gravity;
+    [Header("Jump Settings")]
+    [SerializeField] private int jumpHeight = 5;
+    [SerializeField] private float gravity = 9.81f;
 
-    //Animation
-    public Animator cameraAnimator; // for animations via camera
-   
+    [Header("Character Controller")]
+    public CharacterController controller;
+    public MeshRenderer meshrender;
 
-    //Jumps
+    [Header("Capsule Heights")]
+    [SerializeField] private float standingHeight = 2f;
+    [SerializeField] private float crouchHeight = 1.2f;
+    [SerializeField] private float crawlHeight = 0.6f;
+
+    // Movement States
+    private enum MovementState { Standing, Crouching, Crawling }
+    private MovementState currentState = MovementState.Standing;
+
+    // Jumping
     private const int jumpsMax = 1;
     private int jumpsAmount;
 
+    // Runtime Movement
     public bool isMoving;
     public bool isRunning;
     public bool isCrouching;
     public bool isCrawling;
 
-    //Character Controller Component
-    public CharacterController controller;
-    public MeshRenderer meshrender;
-
-
-    //physics based movement
-   public Vector3 moveDir;
-    Vector3 playerVel;
-
-    //Movement States
-    [SerializeField] private float standingHeight = 2f;
-    [SerializeField] private float crouchHeight = 1.2f;
-    [SerializeField] private float crawlHeight = 0.6f;
-    private enum MovementState { Standing, Crouching, Crawling }
-    private MovementState currentState = MovementState.Standing;
-
+    public Vector3 moveDir;
+    private Vector3 playerVel;
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
-        // meshrender.enabled = false;
+        baseWalkSpeed = walkSpeed;
         Application.runInBackground = true;
-
+        SetHeight(standingHeight);
     }
 
-   
-    public void Update()
+    private void Update()
     {
-        if(controller.isGrounded)
+        if (controller.isGrounded)
         {
             jumpsAmount = 0;
             playerVel.y = 0;
@@ -69,64 +62,40 @@ public class PlayerController : MonoBehaviour
         Jump();
         Crouch();
         Crawl();
-        
-       
-        cameraAnimator.SetFloat("Speed", moveDir.magnitude);
-    }
-
-    public bool IsMoving()
-    {
-        return isMoving;
-    }
-
-    public bool IsRunning()
-    {
-        return isRunning;
-    }
-
-    public bool IsCrouching()
-    {
-        return isCrouching;
-    }
-
-    public bool IsCrawling()
-    {
-        return isCrawling;
     }
 
     private void Movement()
     {
         moveDir = (Input.GetAxis("Horizontal") * transform.right +
-                  (Input.GetAxis("Vertical") * transform.forward));
+                   Input.GetAxis("Vertical") * transform.forward);
 
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
-
         isMoving = moveDir != Vector3.zero;
-
     }
 
     private void Jump()
     {
-        if(Input.GetButtonUp("Jump"))
+        if (Input.GetButtonDown("Jump"))
         {
             if (currentState == MovementState.Crawling || currentState == MovementState.Crouching)
             {
                 currentState = MovementState.Standing;
                 SetHeight(standingHeight);
                 walkSpeed = baseWalkSpeed;
+                isCrawling = false;
+                isCrouching = false;
                 return;
             }
 
-            if (jumpsAmount < jumpsMax && currentState == MovementState.Standing)
+            if (controller.isGrounded && jumpsAmount < jumpsMax && currentState == MovementState.Standing)
             {
                 jumpsAmount++;
-                playerVel.y = jumpHeight;
+                playerVel.y = Mathf.Sqrt(2 * gravity * jumpHeight);
             }
         }
 
-
-        controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
+        controller.Move(playerVel * Time.deltaTime);
     }
 
     private void Sprint()
@@ -135,42 +104,40 @@ public class PlayerController : MonoBehaviour
         {
             walkSpeed *= sprintMult;
             isRunning = true;
-        } 
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        } else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            walkSpeed /= sprintMult;
+            walkSpeed = baseWalkSpeed;
             isRunning = false;
-        } 
-        else
+        } else
         {
             isRunning = false;
         }
     }
 
-    private void Crouch() 
+    private void Crouch()
     {
         if (Input.GetButtonDown("Crouch"))
         {
             if (currentState == MovementState.Standing)
             {
                 currentState = MovementState.Crouching;
-                controller.height = crouchHeight;
                 SetHeight(crouchHeight);
                 walkSpeed = crouchSpeed;
-            } 
-            else if (currentState == MovementState.Crouching)
+                isCrouching = true;
+                isCrawling = false;
+            } else if (currentState == MovementState.Crouching)
             {
                 currentState = MovementState.Standing;
-                controller.height = standingHeight;
                 SetHeight(standingHeight);
                 walkSpeed = baseWalkSpeed;
-            } 
-            else if (currentState == MovementState.Crawling)
+                isCrouching = false;
+            } else if (currentState == MovementState.Crawling)
             {
                 currentState = MovementState.Crouching;
-                controller.height = crouchHeight;
                 SetHeight(crouchHeight);
                 walkSpeed = crouchSpeed;
+                isCrawling = false;
+                isCrouching = true;
             }
         }
     }
@@ -179,39 +146,27 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetButtonDown("Crawl"))
         {
-
-            if (currentState == MovementState.Standing)
+            if (currentState == MovementState.Standing || currentState == MovementState.Crouching)
             {
                 currentState = MovementState.Crawling;
-                controller.height = crawlHeight;
                 SetHeight(crawlHeight);
                 walkSpeed = crawlSpeed;
-            }
-            else if (currentState == MovementState.Crouching)
-            {
-                currentState = MovementState.Crawling;
-                controller.height = crawlHeight;
-                SetHeight(crawlHeight);
-                walkSpeed = crawlSpeed;
-            } 
-            else if (currentState == MovementState.Crawling)
+                isCrawling = true;
+                isCrouching = false;
+            } else if (currentState == MovementState.Crawling)
             {
                 currentState = MovementState.Crouching;
-                controller.height = crouchHeight;
                 SetHeight(crouchHeight);
                 walkSpeed = crouchSpeed;
+                isCrawling = false;
+                isCrouching = true;
             }
         }
     }
 
-    // Helper Functions
     private void SetHeight(float height)
     {
         controller.height = height;
-        controller.center = new Vector3(0f, standingHeight / 2f - height / 2f, 0f);
+        controller.center = new Vector3(0f, height / 2f, 0f); // Keeps bottom flush to ground
     }
-            
-
-    
-
 }
