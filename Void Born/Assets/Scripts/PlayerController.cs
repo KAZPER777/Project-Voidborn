@@ -107,6 +107,41 @@ public class PlayerController : MonoBehaviour
         moveDir = (Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward);
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
+
+        //Sound
+        if (isMoving)
+        {
+            soundManager.playSound(soundManager.soundType.Footstep, 0);
+        }
+
+    }
+
+    private void Jump()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (currentState == MovementState.Crawling || currentState == MovementState.Crouching)
+            {
+                currentState = MovementState.Standing;
+                SetHeight(standingHeight);
+                walkSpeed = baseWalkSpeed;
+                isCrawling = false;
+                isCrouching = false;
+                return;
+            }
+
+            if (controller.isGrounded && jumpsAmount < jumpsMax && currentState == MovementState.Standing)
+            {
+                jumpsAmount++;
+                playerVel.y = Mathf.Sqrt(2 * gravity * jumpHeight);
+
+                //Sound
+                soundManager.playSound(soundManager.soundType.Jump, 1);
+            }
+        }
+
+        playerVel.y -= gravity * Time.deltaTime;
+        controller.Move(playerVel * Time.deltaTime);
     }
 
     private void Sprint()
@@ -150,6 +185,12 @@ public class PlayerController : MonoBehaviour
         if (currentState == MovementState.Crouching || currentState == MovementState.Crawling)
         {
             TransitionToState(MovementState.Standing, standingHeight, baseWalkSpeed);
+        }
+
+        //Sound
+        if (isRunning)
+        {
+            soundManager.playSound(soundManager.soundType.Sprint, 1);
         }
     }
 
