@@ -71,6 +71,13 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
+
+        //Sound
+        if (isMoving)
+        {
+            soundManager.playSound(soundManager.soundType.Footstep, 0);
+        }
+
     }
 
     private void Jump()
@@ -91,6 +98,9 @@ public class PlayerController : MonoBehaviour
             {
                 jumpsAmount++;
                 playerVel.y = Mathf.Sqrt(2 * gravity * jumpHeight);
+
+                //Sound
+                soundManager.playSound(soundManager.soundType.Jump, 1);
             }
         }
 
@@ -111,6 +121,12 @@ public class PlayerController : MonoBehaviour
         } else
         {
             isRunning = false;
+        }
+
+        //Sound
+        if (isRunning)
+        {
+            soundManager.playSound(soundManager.soundType.Sprint, 1);
         }
     }
 
