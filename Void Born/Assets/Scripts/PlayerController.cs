@@ -1,13 +1,10 @@
 ﻿using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
     [Header("Movement Settings")]
     [SerializeField, Range(1f, 5f)] private float walkSpeed;
-    [SerializeField, Range(1.1f, 3f)] private float sprintMult;
-    [SerializeField, Range(1.5f, 10.7f)] private float sprintMax;
     [SerializeField, Range(0.1f, .9f)] private float crouchSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
     [SerializeField] private bool canMove = true;
@@ -42,6 +39,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float crouchOffset = -0.4f;
     [SerializeField] private float crawlOffset = -0.8f;
 
+    [Header("Health Settings")]
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float currentHealth;
+
     private enum MovementState { Standing, Crouching, Crawling }
     private MovementState currentState = MovementState.Standing;
 
@@ -54,8 +55,6 @@ public class PlayerController : MonoBehaviour
 
     private float baseWalkSpeed;
     private float sprintHoldTimer = 0f;
-    private bool isBuildUpSprinting = false;
-    private bool isFullSprinting = false;
 
     private Vector3 moveDir;
     private Vector3 playerVel;
@@ -65,6 +64,7 @@ public class PlayerController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         baseWalkSpeed = walkSpeed;
         SetHeight(standingHeight);
+        currentHealth = maxHealth;
     }
 
     private void Update()
@@ -88,7 +88,6 @@ public class PlayerController : MonoBehaviour
 
         ApplyGravity();
 
-        // ✅ Update Speed parameter for blend tree
         if (visualAnimator != null)
         {
             float currentSpeed = moveDir.magnitude * walkSpeed;
@@ -107,41 +106,6 @@ public class PlayerController : MonoBehaviour
         moveDir = (Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward);
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
-
-        //Sound
-        if (isMoving)
-        {
-            soundManager.playSound(soundManager.soundType.Footstep, 0);
-        }
-
-    }
-
-    private void Jump()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            if (currentState == MovementState.Crawling || currentState == MovementState.Crouching)
-            {
-                currentState = MovementState.Standing;
-                SetHeight(standingHeight);
-                walkSpeed = baseWalkSpeed;
-                isCrawling = false;
-                isCrouching = false;
-                return;
-            }
-
-            if (controller.isGrounded && jumpsAmount < jumpsMax && currentState == MovementState.Standing)
-            {
-                jumpsAmount++;
-                playerVel.y = Mathf.Sqrt(2 * gravity * jumpHeight);
-
-                //Sound
-                soundManager.playSound(soundManager.soundType.Jump, 1);
-            }
-        }
-
-        playerVel.y -= gravity * Time.deltaTime;
-        controller.Move(playerVel * Time.deltaTime);
     }
 
     private void Sprint()
@@ -157,23 +121,11 @@ public class PlayerController : MonoBehaviour
             if (movingBackward)
             {
                 isJogging = true;
-                ResetSprintSpeed(baseWalkSpeed * 1.1f);
+                walkSpeed = baseWalkSpeed * 1.1f;
             } else if (movingForward)
             {
                 sprintHoldTimer += Time.deltaTime;
-
-                if (sprintHoldTimer >= sprintRampUpTime)
-                {
-                    ResetSprintSpeed(baseWalkSpeed * fullSprintMult);
-                    isFullSprinting = true;
-                    isBuildUpSprinting = false;
-                } else
-                {
-                    ResetSprintSpeed(baseWalkSpeed * buildUpMult);
-                    isBuildUpSprinting = true;
-                    isFullSprinting = false;
-                }
-
+                walkSpeed = sprintHoldTimer >= sprintRampUpTime ? baseWalkSpeed * fullSprintMult : baseWalkSpeed * buildUpMult;
                 isRunning = true;
                 isJogging = false;
             } else ResetSprintState();
@@ -185,12 +137,6 @@ public class PlayerController : MonoBehaviour
         if (currentState == MovementState.Crouching || currentState == MovementState.Crawling)
         {
             TransitionToState(MovementState.Standing, standingHeight, baseWalkSpeed);
-        }
-
-        //Sound
-        if (isRunning)
-        {
-            soundManager.playSound(soundManager.soundType.Sprint, 1);
         }
     }
 
@@ -252,31 +198,22 @@ public class PlayerController : MonoBehaviour
         isVaulting = true;
         controller.enabled = false;
 
-        // Trigger vault animation
-        if (visualAnimator != null)
-        {
-            visualAnimator.SetTrigger("Vault");
-        }
+        visualAnimator?.SetTrigger("Vault");
 
-        // Optional: disable input or movement
         bool originalCanMove = canMove;
         canMove = false;
 
         Vector3 vaultStart = transform.position;
-
-        // Adjust vault target position to be just past the obstacle
         Vector3 vaultEnd = hit.point + transform.forward * 0.15f;
         vaultEnd.y = hit.collider.bounds.max.y + 0.05f + (controller.height / 2f);
 
         float elapsed = 0f;
-        float duration = vaultDuration; // you can set this equal to your animation clip length
+        float duration = vaultDuration;
 
         while (elapsed < duration)
         {
             float t = elapsed / duration;
             float curvedT = vaultCurve.Evaluate(t);
-
-            // Arc effect: small vertical offset using sine wave
             float arc = Mathf.Sin(curvedT * Mathf.PI) * 0.15f;
 
             Vector3 nextPos = Vector3.Lerp(vaultStart, vaultEnd, curvedT);
@@ -287,14 +224,11 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        // Snap to final position
         transform.position = vaultEnd;
-
         controller.enabled = true;
         canMove = originalCanMove;
         isVaulting = false;
     }
-
 
     private void SetHeight(float height)
     {
@@ -303,37 +237,21 @@ public class PlayerController : MonoBehaviour
 
         if (visualHolder != null)
         {
-            float offsetY = 0f;
-
-            switch (currentState)
+            float offsetY = currentState switch
             {
-                case MovementState.Standing:
-                    offsetY = standingOffset;
-                    break;
-                case MovementState.Crouching:
-                    offsetY = crouchOffset;
-                    break;
-                case MovementState.Crawling:
-                    offsetY = crawlOffset;
-                    break;
-            }
+                MovementState.Crouching => crouchOffset,
+                MovementState.Crawling => crawlOffset,
+                _ => standingOffset,
+            };
 
             visualHolder.localPosition = new Vector3(0f, offsetY, 0f);
         }
-    }
-
-
-    private void ResetSprintSpeed(float speed)
-    {
-        walkSpeed = speed;
     }
 
     private void ResetSprintState()
     {
         sprintHoldTimer = 0f;
         isRunning = false;
-        isBuildUpSprinting = false;
-        isFullSprinting = false;
         isJogging = false;
         walkSpeed = baseWalkSpeed;
     }
@@ -343,7 +261,26 @@ public class PlayerController : MonoBehaviour
         currentState = newState;
         SetHeight(newHeight);
         walkSpeed = newSpeed;
-        isCrouching = (newState == MovementState.Crouching);
-        isCrawling = (newState == MovementState.Crawling);
+        isCrouching = newState == MovementState.Crouching;
+        isCrawling = newState == MovementState.Crawling;
+    }
+
+    public void TakeDamage(float amount)
+    {
+        if (currentHealth <= 0f) return;
+
+        currentHealth -= amount;
+
+        if (currentHealth <= 0f)
+        {
+            currentHealth = 0f;
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player has died");
+        // Add death behavior here (e.g. disable movement)
     }
 }
