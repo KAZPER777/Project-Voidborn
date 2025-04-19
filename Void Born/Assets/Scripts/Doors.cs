@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Doors : MonoBehaviour
 {
-    public Animator door;
+    public Animator drawer;
     public GameObject openText;
 
     public AudioSource doorSound;
@@ -62,8 +62,8 @@ public class Doors : MonoBehaviour
     void DoorOpens ()
     {
         Debug.Log("It Opens");
-        door.SetBool("Open", true);
-        door.SetBool("Closed", false);
+        drawer.SetBool("Open", true);
+        drawer.SetBool("Closed", false);
         doorSound.Play();
 
     }
@@ -71,8 +71,8 @@ public class Doors : MonoBehaviour
     void DoorCloses()
     {
         Debug.Log("It Closes");
-        door.SetBool("Open", false);
-        door.SetBool("Closed", true);
+        drawer.SetBool("Open", false);
+        drawer.SetBool("Closed", true);
     }
 
 
