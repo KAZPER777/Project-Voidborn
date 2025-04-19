@@ -21,8 +21,10 @@ public class PlayerController : MonoBehaviour
     private const int jumpsMax = 1;
     private int jumpsAmount;
 
-    public bool isMoving;
-    public bool isRunning;
+    [HideInInspector] 
+    public bool isMoving; //unhide if you want to see in the inspector
+    [HideInInspector]
+    public bool isRunning; //unhide if you want to see in the inspector
 
     //Character Controller Component
     public CharacterController controller;
