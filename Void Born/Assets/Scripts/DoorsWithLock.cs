@@ -11,15 +11,10 @@ public class DoorsWithLock : MonoBehaviour
     public AudioSource doorSound;
     public AudioSource lockedSound;
 
-
     public bool inReach;
     public bool unlocked;
     public bool locked;
     public bool hasKey;
-
-
-
-
 
     void Start()
     {
@@ -80,9 +75,6 @@ public class DoorsWithLock : MonoBehaviour
             lockedSound.Play();
             
         }
-
-
-
 
     }
     void DoorOpens ()

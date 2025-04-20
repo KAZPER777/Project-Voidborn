@@ -12,15 +12,11 @@ public class LightsFlicker : MonoBehaviour
     public float maxTime;
     public float timer;
 
-
     void Start()
     {
         timer = Random.Range(minTime, maxTime);
         
     }
-
-
-
 
     void Update()
     {
@@ -38,8 +34,5 @@ public class LightsFlicker : MonoBehaviour
             timer = Random.Range(minTime, maxTime);
             lightSound.Play();
         }
-
-
-
     }
 }
