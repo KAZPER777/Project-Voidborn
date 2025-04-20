@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     [Header("Health Settings")]
     [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private float currentHealth;
+    [SerializeField] public float currentHealth;
 
     private enum MovementState { Standing, Crouching, Crawling }
     private MovementState currentState = MovementState.Standing;
@@ -104,6 +104,13 @@ public class PlayerController : MonoBehaviour, IDamageable
     private void Movement()
     {
         moveDir = (Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward);
+
+         // Normalize to ensure consistent speed in all directions
+        if (moveDir.magnitude > 0.1f)
+        {
+            moveDir = moveDir.normalized;
+        }
+
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
     }
@@ -278,7 +285,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
     }
 
-    private void Die()
+    public void Die()
     {
         Debug.Log("Player has died");
         // Add death behavior here (e.g. disable movement)
