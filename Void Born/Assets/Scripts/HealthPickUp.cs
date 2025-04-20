@@ -40,7 +40,7 @@ public class HealthPickUp : MonoBehaviour
 
     void Start()
     {
-        currentHealth = player.GetComponent<Health>().health;
+        currentHealth = player.GetComponent<PlayerHealth>().health;
         cannotPickUpText.SetActive(false);
         pickUpText.SetActive(false);
 
