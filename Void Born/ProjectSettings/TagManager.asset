@@ -3,15 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - level exit
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Vaultable
+  - 
   - Water
   - UI
-  - Player
+  - 
   - 
   - 
   - 
