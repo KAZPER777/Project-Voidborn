@@ -1,7 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-public class jaidensCameraController : MonoBehaviour
+public class JaidensCameraController : MonoBehaviour
 {
     public JaidensController player;
     [SerializeField] CharacterController controller;
