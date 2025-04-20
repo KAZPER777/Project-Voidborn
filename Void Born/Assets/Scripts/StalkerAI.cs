@@ -80,8 +80,7 @@ public class StalkerAI : MonoBehaviour
         Vector3 origin = Camera.main.transform.position;
         Vector3 direction = Camera.main.transform.forward;
 
-        // This will draw the ray in the Scene view
-        Debug.DrawRay(origin, direction * 200f, Color.red);
+       
 
         if (!hasRaged)
         {
@@ -98,7 +97,7 @@ public class StalkerAI : MonoBehaviour
             else
             {
                 Debug.Log("not staring");
-                currentStareTime = 1.5f; //reset
+                currentStareTime = 0f; //reset
             }
         }
 
@@ -157,9 +156,10 @@ public class StalkerAI : MonoBehaviour
         if (playerTransform.TryGetComponent<IDamageable>(out var damageable))
         {
 
-            damageable.TakeDamage(100);
+            damageable.TakeDamage(damageAmount);
             animator.SetBool("isAttacking", false);
-            Time.timeScale = 0f; // Pause game after attack
+            animator.SetBool("isEnraged", false);
+            
         }
     }
 

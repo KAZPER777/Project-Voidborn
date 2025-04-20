@@ -14,8 +14,8 @@ public class JaidensController : MonoBehaviour, IDamageable
     [SerializeField] private float gravity;
 
     [Header("Health Settings")]
-    [SerializeField] public float maxHealth = 100f;
-    [SerializeField] public float currentHealth;
+     public float maxHealth = 100f;
+     public float currentHealth;
 
     //Animation
     public Animator cameraAnimator; // for animations via camera
@@ -47,7 +47,8 @@ public class JaidensController : MonoBehaviour, IDamageable
         controller = GetComponent<CharacterController>();
         meshrender.enabled = false;
         Application.runInBackground = true;
-
+        currentHealth = maxHealth;
+       
     }
 
 
@@ -122,15 +123,22 @@ public class JaidensController : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount)
     {
-        if (currentHealth <= 0f) return;
-
         currentHealth -= amount;
+        UpdatePlayerUI();
+        StartCoroutine(flashDamageScreen());
 
-        if (currentHealth <= 0f)
+        if (currentHealth <= 0)
         {
-            currentHealth = 0f;
+            gamemanager.instance.YouLose();
             Die();
         }
+    }
+
+    IEnumerator flashDamageScreen()
+    {
+        gamemanager.instance.playerdamagescreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gamemanager.instance.playerdamagescreen.SetActive(false);
     }
 
     public void Die()
@@ -139,5 +147,16 @@ public class JaidensController : MonoBehaviour, IDamageable
         // Add death behavior here 
     }
 
+    public void SpawnPlayer()
+    {
+        controller.transform.position = gamemanager.instance.playerSpawnPos.transform.position;
+        maxHealth = currentHealth;
+        UpdatePlayerUI();
+    }
+
+    public void UpdatePlayerUI()
+    {
+        gamemanager.instance.playerHPBar.fillAmount = (float)currentHealth / maxHealth;
+    }
 
 }
