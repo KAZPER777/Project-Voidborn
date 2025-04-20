@@ -27,7 +27,7 @@ public class WeepingAngelV2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 player = playerTransform.transform.position + Vector3.up * 1f;
+        Vector3 player = playerTransform.transform.position + Vector3.up * -1f;
         float distanceToPlayer = Vector3.Distance(transform.position, player);
 
        if(agent != null)
