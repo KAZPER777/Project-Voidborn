@@ -2553,6 +2553,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6892210736614777375, guid: f28968997e99c854c9de6507c35fa104, type: 3}
+      propertyPath: MaxDistance
+      value: 528.6504
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892210736614777375, guid: f28968997e99c854c9de6507c35fa104, type: 3}
       propertyPath: m_PlayOnAwake
       value: 0
       objectReference: {fileID: 0}
@@ -2567,6 +2571,14 @@ PrefabInstance:
     - target: {fileID: 7652468365354548982, guid: f28968997e99c854c9de6507c35fa104, type: 3}
       propertyPath: walkSpeed
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652468365354548982, guid: f28968997e99c854c9de6507c35fa104, type: 3}
+      propertyPath: isCrawling
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652468365354548982, guid: f28968997e99c854c9de6507c35fa104, type: 3}
+      propertyPath: isCrouching
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7652468365354548982, guid: f28968997e99c854c9de6507c35fa104, type: 3}
       propertyPath: vaultLayer.m_Bits
