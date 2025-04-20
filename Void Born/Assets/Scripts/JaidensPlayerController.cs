@@ -2,7 +2,7 @@ using System.Collections;
 using System.Data;
 using UnityEngine;
 
-public class JaidensController : MonoBehaviour
+public class JaidensController : MonoBehaviour, IDamageable
 {
     //Player Movement
     [SerializeField] private float walkSpeed;
@@ -12,6 +12,10 @@ public class JaidensController : MonoBehaviour
     //Player Jumping (incase we add it anyway)
     [SerializeField] private int jumpHeight;
     [SerializeField] private float gravity;
+
+    [Header("Health Settings")]
+    [SerializeField] public float maxHealth = 100f;
+    [SerializeField] public float currentHealth;
 
     //Animation
     public Animator cameraAnimator; // for animations via camera
@@ -78,9 +82,13 @@ public class JaidensController : MonoBehaviour
         moveDir = (Input.GetAxis("Horizontal") * transform.right +
                   (Input.GetAxis("Vertical") * transform.forward));
 
+        moveDir = moveDir.normalized;
+
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
 
         isMoving = moveDir != Vector3.zero;
+
+
 
     }
 
@@ -112,7 +120,24 @@ public class JaidensController : MonoBehaviour
     }
 
 
+    public void TakeDamage(float amount)
+    {
+        if (currentHealth <= 0f) return;
 
+        currentHealth -= amount;
+
+        if (currentHealth <= 0f)
+        {
+            currentHealth = 0f;
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        Debug.Log("Player has died");
+        // Add death behavior here 
+    }
 
 
 }

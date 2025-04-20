@@ -12,7 +12,7 @@ public class WeepingAngelV2 : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip[] watcherSounds;
 
-    private float fadeSpeed = 2;
+    
     private const string WEEPING_MOVING = "isWeepingMoving";
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
