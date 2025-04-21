@@ -264,6 +264,7 @@ public class JaidensController : MonoBehaviour, IDamageable
         if (currentHealth <= 0)
         {
             currentHealth = 0;
+            gamemanager.instance.YouLose();
             Die();
         }
     }

@@ -20,9 +20,9 @@ public class JaidensCameraController : MonoBehaviour
     // Camera Offsets
     [Header("Camera Vertical Offsets")]
     [SerializeField] private Transform cameraHolder;
-    [SerializeField] private float standingY = 1.6f;
-    [SerializeField] private float crouchingY = 1.0f;
-    [SerializeField] private float crawlingY = 0.65f;
+    [SerializeField] private float standingY = 1.0f;
+    [SerializeField] private float crouchingY = 0.8f;
+    [SerializeField] private float crawlingY = 0.5f;
     [SerializeField] private float camLerpSpeed = 7f;
 
     private void Start()
