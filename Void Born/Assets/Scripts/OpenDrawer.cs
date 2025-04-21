@@ -15,8 +15,6 @@ public class OpenDrawer : MonoBehaviour
     private bool open;
 
     private bool inReach;
-
-
     void Start()
     {
         openText.SetActive(false);
@@ -52,8 +50,6 @@ public class OpenDrawer : MonoBehaviour
             closedText.SetActive(false);
         }
     }
-
-
 
     void Update()
     {
