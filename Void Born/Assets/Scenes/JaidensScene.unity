@@ -118,7 +118,6 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
 --- !u!1 &52934646 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6361591004597476057, guid: 72e79e7af2bcdb847bc2b6540d376769, type: 3}
@@ -552,6 +551,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &610463661
 PrefabInstance:
+
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
@@ -3008,6 +3008,17 @@ GameObject:
   m_PrefabInstance: {fileID: 976282298}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &976282300
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1693136222}
+  - {fileID: 46906374}
+  - {fileID: 1509895792}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &803408357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
