@@ -9,11 +9,7 @@ public class Doors : MonoBehaviour
 
     public AudioSource doorSound;
 
-
     public bool inReach;
-
-
-
 
     void Start()
     {
@@ -54,10 +50,6 @@ public class Doors : MonoBehaviour
         {
             DoorCloses();
         }
-
-
-
-
     }
     void DoorOpens ()
     {
@@ -74,6 +66,4 @@ public class Doors : MonoBehaviour
         drawer.SetBool("Open", false);
         drawer.SetBool("Closed", true);
     }
-
-
 }

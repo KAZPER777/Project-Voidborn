@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 public class Ladder : MonoBehaviour
 {
 
     public Transform playerController;
     bool inside = false;
     public float speed = 3f;
-    public PlayerController player;
+    public FirstPersonController player;
     public AudioSource sound;
 
 
@@ -16,7 +17,7 @@ public class Ladder : MonoBehaviour
 
     void Start()
     {
-        player = GetComponent<PlayerController>();
+        player = GetComponent<FirstPersonController>();
         inside = false;
 
 
