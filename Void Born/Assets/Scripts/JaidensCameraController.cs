@@ -6,95 +6,83 @@ public class JaidensCameraController : MonoBehaviour
     public JaidensController player;
     [SerializeField] CharacterController controller;
 
-    //Animator
+    // Animator
     public Animator cameraAnimation;
-
     private const string IS_MOVING = "IsMoving";
     private const string IS_RUNNING = "IsRunning";
 
-
-
-
-    //Camera Movement
+    // Camera Movement
     public float mouseSens;
-
     public bool cameraBob;
     public bool invertY;
     private float rotX;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Camera Offsets
+    [Header("Camera Vertical Offsets")]
+    [SerializeField] private Transform cameraHolder;
+    [SerializeField] private float standingY = 1.6f;
+    [SerializeField] private float crouchingY = 1.0f;
+    [SerializeField] private float crawlingY = 0.65f;
+    [SerializeField] private float camLerpSpeed = 7f;
+
     private void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         cameraAnimation = GetComponent<Animator>();
-
-
     }
 
-    // Update is called once per frame
     private void Update()
     {
-
         CameraMovement();
+        HandleCameraHeight();
         PlayerMoving();
         PlayerRunning();
 
-        if (player.isMoving)
-            if (cameraBob && player.isMoving)
-            {
-
-                CameraBobbing();
-            }
-
-    }
-
-    private void PlayerMoving()
-    {
-        if (player.isMoving)
+        if (player.isMoving && cameraBob)
         {
-            cameraAnimation.SetBool(IS_MOVING, player.isMoving);
-        }
-        else
-        {
-            cameraAnimation.SetBool(IS_MOVING, player.isMoving);
+            CameraBobbing(); // still empty for now
         }
     }
 
-        
-    private void PlayerRunning()
-    {
-        if (player.isMoving && player.isRunning)
-        {
-            cameraAnimation.SetBool(IS_RUNNING, player.isRunning);
-        }
-        else
-        {
-            cameraAnimation.SetBool(IS_RUNNING, player.isRunning);
-        }
-
-    }
-
-    //Controlls camera movement (might switch it to public because there may be a mechanic altering this)
     private void CameraMovement()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSens * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;
 
-
-        if (invertY)
-            rotX += mouseY;
-        else
-            rotX -= mouseY;
-
+        rotX += invertY ? mouseY : -mouseY;
         rotX = Mathf.Clamp(rotX, -90, 90);
+
         transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
         transform.parent.parent.Rotate(Vector3.up * mouseX);
     }
 
+    private void HandleCameraHeight()
+    {
+        if (!cameraHolder) return;
+
+        float targetY = standingY;
+
+        if (player.isCrawling) targetY = crawlingY;
+        else if (player.isCrouching) targetY = crouchingY;
+
+        Vector3 localPos = cameraHolder.localPosition;
+        localPos.y = Mathf.Lerp(localPos.y, targetY, Time.deltaTime * camLerpSpeed);
+        cameraHolder.localPosition = localPos;
+    }
+
+    private void PlayerMoving()
+    {
+        cameraAnimation.SetBool(IS_MOVING, player.isMoving);
+    }
+
+    private void PlayerRunning()
+    {
+        cameraAnimation.SetBool(IS_RUNNING, player.isRunning);
+    }
+
     public void CameraBobbing()
     {
-
-
+        // Optional: implement bobbing effect here
     }
 }

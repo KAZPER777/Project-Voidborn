@@ -1,140 +1,274 @@
 using System.Collections;
-using System.Data;
 using UnityEngine;
 
 public class JaidensController : MonoBehaviour, IDamageable
 {
-    //Player Movement
-    [SerializeField] private float walkSpeed;
-    [SerializeField] private float sprintMult;
-    [SerializeField] private float sprintMax;
+    [Header("Movement Settings")]
+    [SerializeField, Range(1f, 5f)] private float walkSpeed;
+    [SerializeField, Range(0.1f, .9f)] private float crouchSpeed;
+    [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
+    [SerializeField] private bool canMove = true;
 
-    //Player Jumping (incase we add it anyway)
-    [SerializeField] private int jumpHeight;
-    [SerializeField] private float gravity;
+    [Header("Sprint Timing")]
+    [SerializeField] private float sprintRampUpTime = 1.0f;
+    [SerializeField] private float buildUpMult = 1.25f;
+    [SerializeField] private float fullSprintMult = 1.5f;
+
+    [Header("Gravity Settings")]
+    [SerializeField] private float gravity = 9.81f;
 
     [Header("Health Settings")]
-     public float maxHealth = 100f;
-     public float currentHealth;
+    public float maxHealth = 100f;
+    public float currentHealth;
 
-    //Animation
-    public Animator cameraAnimator; // for animations via camera
+    [Header("Vault Settings")]
+    [SerializeField] private float vaultRange = 1.5f;
+    [SerializeField] private float vaultDuration = 2f;
+    [SerializeField] private Transform vaultCheckOrigin;
+    [SerializeField] private LayerMask vaultLayer;
+    [SerializeField] private AnimationCurve vaultCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+    [Header("Capsule Heights")]
+    [SerializeField] private float standingHeight = 2f;
+    [SerializeField] private float crouchHeight = 1.2f;
+    [SerializeField] private float crawlHeight = 0.6f;
 
-    //Jumps
-    private const int jumpsMax = 1;
-    private int jumpsAmount;
+    [Header("Model Offsets")]
+    [SerializeField] private float standingOffset = 0f;
+    [SerializeField] private float crouchOffset = -0.4f;
+    [SerializeField] private float crawlOffset = -0.8f;
 
-    
-    [HideInInspector]
-    public bool isMoving; //unhide if you want to see in the inspector
-    [HideInInspector]
-    public bool isRunning; //unhide if you want to see in the inspector
-
-    //Character Controller Component
+    [Header("Components")]
     public CharacterController controller;
+    [SerializeField] private Transform visualHolder;
+    [SerializeField] private Animator visualAnimator;
     public MeshRenderer meshrender;
+    public Animator cameraAnimator;
 
+    // Movement state
+    private enum MovementState { Standing, Crouching, Crawling }
+    private MovementState currentState = MovementState.Standing;
 
-    //physics based movement
+    private float baseWalkSpeed;
+    private float sprintHoldTimer = 0f;
+    private bool isVaulting = false;
+    private bool isJogging = false;
+
+    public bool isCrouching;
+    public bool isCrawling;
+    [HideInInspector] public bool isMoving;
+    [HideInInspector] public bool isRunning;
+
     public Vector3 moveDir;
-    Vector3 playerVel;
-
-
+    private Vector3 playerVel;
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         meshrender.enabled = false;
         Application.runInBackground = true;
+
+        baseWalkSpeed = walkSpeed;
+        SetHeight(standingHeight);
         currentHealth = maxHealth;
-       
     }
 
-
-    public void Update()
+    private void Update()
     {
-        if (controller.isGrounded)
-        {
-            jumpsAmount = 0;
+        if (controller.isGrounded && !isVaulting)
             playerVel.y = 0;
+
+        if (!isVaulting && canMove)
+        {
+            Movement();
+            Sprint();
+            HandleCrouch();
+            HandleCrawl();
+
+            if (Input.GetButtonDown("Jump"))
+            {
+                HandleJumpOrStand();
+                TryVault();
+            }
         }
 
-        Movement();
-        Sprint();
-        Jump();
-
-
+        ApplyGravity();
         cameraAnimator.SetFloat("Speed", moveDir.magnitude);
-    }
-
-    public bool IsMoving()
-    {
-        return isMoving;
-    }
-
-    public bool IsRunning()
-    {
-        return isRunning;
     }
 
     private void Movement()
     {
-        moveDir = (Input.GetAxis("Horizontal") * transform.right +
-                  (Input.GetAxis("Vertical") * transform.forward));
+        if (!canMove) return;
 
-        moveDir = moveDir.normalized;
+        moveDir = (Input.GetAxis("Horizontal") * transform.right +
+                   Input.GetAxis("Vertical") * transform.forward).normalized;
 
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
-
         isMoving = moveDir != Vector3.zero;
-
-
-
-    }
-
-    private void Jump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && jumpsAmount < 1)
-        {
-            jumpsAmount++;
-            playerVel.y = jumpHeight;
-        }
-        controller.Move(playerVel * Time.deltaTime);
-
-        playerVel.y -= gravity * Time.deltaTime;
-
     }
 
     private void Sprint()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && walkSpeed < sprintMax)
+        bool sprintHeld = Input.GetButton("Sprint");
+        float verticalInput = Input.GetAxis("Vertical");
+        bool forward = verticalInput > 0.1f;
+        bool backward = verticalInput < -0.1f;
+        bool sprintable = currentState == MovementState.Standing && isMoving;
+
+        if (sprintHeld && sprintable)
         {
-            walkSpeed *= sprintMult;
-            isRunning = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+            if (backward)
+            {
+                isJogging = true;
+                walkSpeed = baseWalkSpeed * 1.1f;
+            } else if (forward)
+            {
+                sprintHoldTimer += Time.deltaTime;
+                walkSpeed = sprintHoldTimer >= sprintRampUpTime ? baseWalkSpeed * fullSprintMult : baseWalkSpeed * buildUpMult;
+                isRunning = true;
+                isJogging = false;
+            }
+        } else ResetSprintState();
+    }
+
+    private void ResetSprintState()
+    {
+        sprintHoldTimer = 0f;
+        isRunning = false;
+        isJogging = false;
+        walkSpeed = baseWalkSpeed;
+    }
+
+    private void HandleJumpOrStand()
+    {
+        if (currentState == MovementState.Crouching || currentState == MovementState.Crawling)
         {
-            walkSpeed /= sprintMult;
-            isRunning = false;
+            TransitionToState(MovementState.Standing, standingHeight, baseWalkSpeed);
         }
     }
 
+    private void HandleCrouch()
+    {
+        if (!Input.GetButtonDown("Crouch")) return;
+
+        switch (currentState)
+        {
+            case MovementState.Standing:
+                TransitionToState(MovementState.Crouching, crouchHeight, crouchSpeed);
+                break;
+            case MovementState.Crouching:
+                TransitionToState(MovementState.Standing, standingHeight, baseWalkSpeed);
+                break;
+            case MovementState.Crawling:
+                TransitionToState(MovementState.Crouching, crouchHeight, crouchSpeed);
+                break;
+        }
+    }
+
+    private void HandleCrawl()
+    {
+        if (!Input.GetButtonDown("Crawl")) return;
+
+        switch (currentState)
+        {
+            case MovementState.Standing:
+            case MovementState.Crouching:
+                TransitionToState(MovementState.Crawling, crawlHeight, crawlSpeed);
+                break;
+            case MovementState.Crawling:
+                TransitionToState(MovementState.Crouching, crouchHeight, crouchSpeed);
+                break;
+        }
+    }
+
+    private void TryVault()
+    {
+        if (isVaulting) return;
+
+        if (Physics.Raycast(vaultCheckOrigin.position, transform.forward, out RaycastHit hit, vaultRange, vaultLayer))
+        {
+            StartCoroutine(PerformVault(hit));
+        }
+    }
+
+    private IEnumerator PerformVault(RaycastHit hit)
+    {
+        isVaulting = true;
+        controller.enabled = false;
+        canMove = false;
+
+        visualAnimator?.SetTrigger("Vault");
+
+        Vector3 start = transform.position;
+        Vector3 end = hit.point + transform.forward * 0.15f;
+        end.y = hit.collider.bounds.max.y + 0.05f + (controller.height / 2f);
+
+        float elapsed = 0f;
+        while (elapsed < vaultDuration)
+        {
+            float t = elapsed / vaultDuration;
+            float yArc = Mathf.Sin(vaultCurve.Evaluate(t) * Mathf.PI) * 0.15f;
+
+            transform.position = Vector3.Lerp(start, end, t) + Vector3.up * yArc;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = end;
+        controller.enabled = true;
+        canMove = true;
+        isVaulting = false;
+    }
+
+    private void ApplyGravity()
+    {
+        if (!controller.enabled || controller.isGrounded) return;
+
+        playerVel.y -= gravity * Time.deltaTime;
+        controller.Move(playerVel * Time.deltaTime);
+    }
+
+    private void SetHeight(float height)
+    {
+        controller.height = height;
+        controller.center = new Vector3(0f, height / 2f, 0f);
+
+        if (visualHolder != null)
+        {
+            float offsetY = currentState switch
+            {
+                MovementState.Crouching => crouchOffset,
+                MovementState.Crawling => crawlOffset,
+                _ => standingOffset,
+            };
+
+            visualHolder.localPosition = new Vector3(0f, offsetY, 0f);
+        }
+    }
+
+    private void TransitionToState(MovementState newState, float newHeight, float newSpeed)
+    {
+        currentState = newState;
+        SetHeight(newHeight);
+        walkSpeed = newSpeed;
+        isCrouching = newState == MovementState.Crouching;
+        isCrawling = newState == MovementState.Crawling;
+    }
 
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        UpdatePlayerUI();
-        StartCoroutine(flashDamageScreen());
+        gamemanager.instance.playerHPBar.fillAmount = currentHealth / maxHealth;
+        StartCoroutine(DamageFlash());
 
         if (currentHealth <= 0)
         {
-            gamemanager.instance.YouLose();
+            currentHealth = 0;
             Die();
         }
     }
 
-    IEnumerator flashDamageScreen()
+    private IEnumerator DamageFlash()
     {
         gamemanager.instance.playerdamagescreen.SetActive(true);
         yield return new WaitForSeconds(0.1f);
@@ -143,20 +277,17 @@ public class JaidensController : MonoBehaviour, IDamageable
 
     public void Die()
     {
-        Debug.Log("Player has died");
-        // Add death behavior here 
+        Debug.Log("Player has died.");
+        canMove = false;
+        controller.enabled = false;
     }
 
     public void SpawnPlayer()
     {
-        controller.transform.position = gamemanager.instance.playerSpawnPos.transform.position;
-        maxHealth = currentHealth;
-        UpdatePlayerUI();
+        transform.position = gamemanager.instance.playerSpawnPos.transform.position;
+        currentHealth = maxHealth;
+        controller.enabled = true;
+        canMove = true;
+        gamemanager.instance.playerHPBar.fillAmount = 1f;
     }
-
-    public void UpdatePlayerUI()
-    {
-        gamemanager.instance.playerHPBar.fillAmount = (float)currentHealth / maxHealth;
-    }
-
 }
