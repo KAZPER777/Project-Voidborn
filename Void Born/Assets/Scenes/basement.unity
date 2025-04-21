@@ -4338,7 +4338,7 @@ PrefabInstance:
     - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
       propertyPath: KeyINV
       value: 
-      objectReference: {fileID: 1441406432}
+      objectReference: {fileID: 0}
     - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
       propertyPath: hasKey
       value: 0
@@ -9338,3 +9338,5 @@ SceneRoots:
   - {fileID: 2099816023}
   - {fileID: 1527770425}
   - {fileID: 1295114650}
+  - {fileID: 1600065304}
+  - {fileID: 1054967207}
