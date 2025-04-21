@@ -9,6 +9,7 @@ public class OpenKeyPad : MonoBehaviour
 
     public bool inReach;
 
+
     void Start()
     {
         inReach = false;
@@ -33,6 +34,9 @@ public class OpenKeyPad : MonoBehaviour
 
         }
     }
+
+
+
 
     void Update()
     {
