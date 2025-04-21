@@ -52,7 +52,7 @@ public class StalkerAI : MonoBehaviour
 
     void Start()
     {
-        // Optional, in case not assigned in inspector
+        //Get Components to automatically assign
         agent = GetComponent<NavMeshAgent>();
         source = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
@@ -63,12 +63,12 @@ public class StalkerAI : MonoBehaviour
 
     void Update()
     {
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); // center of screen
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); //Where raycast should point
         RaycastHit hit;
 
         bool isPlayerStaring = false;
 
-        if (Physics.Raycast(ray, out hit, 200f)) // distance threshold
+        if (Physics.Raycast(ray, out hit, 200f)) // distance threshold for how far player can trigger Stalker Rage
         {
             if (hit.collider == monsterCollider)
             {
@@ -81,7 +81,7 @@ public class StalkerAI : MonoBehaviour
         Vector3 direction = Camera.main.transform.forward;
 
        
-
+        //if hasnt raged, checks if the player is staring and increments time if they are
         if (!hasRaged)
         {
             if (isPlayerStaring)
@@ -97,11 +97,11 @@ public class StalkerAI : MonoBehaviour
             else
             {
                 Debug.Log("not staring");
-                currentStareTime = 0f; //reset
+                currentStareTime = 0f; //reset timer
             }
         }
 
-        // Handle rage pause timer
+        // Pauses to finish animation then start chasing
         if (hasRaged && !isChasing)
         {
             rageTimer -= Time.deltaTime;
@@ -111,6 +111,7 @@ public class StalkerAI : MonoBehaviour
             }
         }
 
+        //Logic for when stalker starts chasing
         if (isChasing)
         {
             agent.speed = 15;
@@ -129,6 +130,7 @@ public class StalkerAI : MonoBehaviour
             damageTimer -= Time.deltaTime;
         }
 
+        //checks if rage and chasing isnt true. Allows Stalker to roam to a random desination
         if (!hasRaged && !isChasing)
         {
             roamTimer -= Time.deltaTime;
@@ -145,12 +147,14 @@ public class StalkerAI : MonoBehaviour
            
         }
 
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        //If stalker is not moving (reached its destination after roaming, set moving to false)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance) 
         {
             animator.SetBool("isMoving", false);
         }
     }
 
+    //When attack animation ends it executes this method
     public void OnAttackAnimationEnd()
     {
         if (playerTransform.TryGetComponent<IDamageable>(out var damageable))
@@ -169,18 +173,18 @@ public class StalkerAI : MonoBehaviour
         hasRaged = true;
         rageTimer = ragePauseDuration;
 
-        // Stop movement
+        // Stop Stalker movement 
         agent.isStopped = true;
 
-        // Set animation triggers
+        // Set animation triggers to true (triggering the rage)
         animator.SetBool(IS_ENRAGED, true);
         animator.SetBool(IS_RUNNING, true);
 
         if (eyeRenderer != null)
         {
-            Color boostedRageColor = Color.red * 10f; // Brighter red
+            Color boostedRageColor = Color.red * 10f; // Brighter red for eye color when enraged
             eyeRenderer.material.SetColor("_EmissionColor", boostedRageColor);
-            DynamicGI.SetEmissive(eyeRenderer, boostedRageColor); // Optional but useful
+            DynamicGI.SetEmissive(eyeRenderer, boostedRageColor); // Sets the emissions renderer of the eye to boostedRageColor (red)
         }
 
         // Play rage sound
@@ -200,24 +204,26 @@ public class StalkerAI : MonoBehaviour
         Debug.Log("Monster is now chasing the player.");
     }
 
-
+    //Stalker roam logic 
     Vector3 PickRoamDestination()
     {
         Vector3 target;
 
+        //If playerSeekChance is higher than Random.Value then pick a point near the player to travel to
         if (Random.value < playerSeekChance)
         {
-            // Pick a point near the player
+           
             Vector3 randomOffset = Random.insideUnitSphere * roamRadius * 0.5f;
             target = playerTransform.position + randomOffset;
         }
         else
         {
-            // Pick a point near current position
+           //If Random.Value greater than playerSeekChance then roam 
             Vector3 randomOffset = Random.insideUnitSphere * roamRadius;
             target = transform.position + randomOffset;
         }
 
+        //just to check if the ai target area is walking somewhere on the navmesh
         NavMeshHit navHit;
         if (NavMesh.SamplePosition(target, out navHit, roamRadius, NavMesh.AllAreas))
         {
@@ -225,7 +231,8 @@ public class StalkerAI : MonoBehaviour
         }
         else
         {
-            return transform.position; // fallback
+            //if not stay in place
+            return transform.position; 
         }
     }
 
