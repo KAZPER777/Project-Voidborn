@@ -1,101 +1,49 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using Unity.VisualScripting;
 
-
-public class gamemanager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static gamemanager instance;
+    public static GameManager Instance;
 
-    [SerializeField] GameObject menuActive;
-    [SerializeField] GameObject menuPause;
-    [SerializeField] GameObject menuWin;
-    [SerializeField] GameObject menuLose;
-    [SerializeField] TMP_Text gameGoalCountText;
+    private bool isPaused = false;
 
-
-
-    public GameObject playerSpawnPos;
-    public Image playerHPBar;
-    public GameObject playerdamagescreen;
-
-    public GameObject player;
-    public JaidensController playerScript;
-    public GameObject checkpointPopup;
-
-
-    public bool isPaused;
-
-    int goalCount;
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        instance = this;
-        player = GameObject.FindWithTag("Player");
-       // playerScript = player.GetComponent<JaidensController>();
-       // playerSpawnPos = GameObject.FindWithTag("Player Spawn PoS"); // not implemented in the game yet. No checkpoints
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Cancel"))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (menuActive == null)
-            {
-                StatePause();
-                menuActive = menuPause;
-                menuActive.SetActive(true);
-            }
-            else if (menuActive == menuPause)
-            {
-                StateUnpause();
-            }
+            TogglePause();
         }
     }
 
-    public void StatePause()
+    public void TogglePause()
     {
         isPaused = !isPaused;
-        Time.timeScale = 0;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        Time.timeScale = isPaused ? 0f : 1f;
+
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowPauseMenu(isPaused);
     }
 
-    public void StateUnpause()
+    public void ResumeGame()
     {
-        isPaused = !isPaused;
-        Time.timeScale = 1;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.None;
-        menuActive.SetActive(false);
-        menuActive = null;
+        isPaused = false;
+        Time.timeScale = 1f;
+        UIManager.Instance.ShowPauseMenu(false);
     }
 
-
-   /* public void updateGameGoal(int amount)
+    public void QuitGame()
     {
-        goalCount += amount;
-        gameGoalCountText.text = goalCount.ToString("F0");      The purpose of this is to update the game goal. This will be used later to update the objective UI
-
-        if (goalCount <= 0)
-        {
-            statePause();
-            menuActive = menuWin;
-            menuActive.SetActive(true);
-        }
-
-
-    }*/
-
-    public void YouLose()
-    {
-        StatePause();
-        menuActive = menuLose;
-        menuActive.SetActive(true);
+        Application.Quit();
     }
-
 }
