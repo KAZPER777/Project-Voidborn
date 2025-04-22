@@ -1,8 +1,19 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    [Header("Player Settings")]
+    public JaidensPlayerController playerScript;
+    public Transform playerSpawnPos;
+
+    [Header("UI References")]
+    public Image playerHPBar;                // Assign Image component directly
+    public GameObject playerdamagescreen;
+    public GameObject checkpointPopup;
+    public GameObject YouLose;
 
     private bool isPaused = false;
 
@@ -11,8 +22,8 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-        }
-        else
+            DontDestroyOnLoad(transform.root.gameObject);
+        } else
         {
             Destroy(gameObject);
         }
@@ -39,7 +50,15 @@ public class GameManager : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = 1f;
-        UIManager.Instance.ShowPauseMenu(false);
+
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowPauseMenu(false);
+    }
+
+    public void ShowLoseScreen()
+    {
+        if (YouLose != null)
+            YouLose.SetActive(true);
     }
 
     public void QuitGame()

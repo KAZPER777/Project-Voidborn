@@ -5,27 +5,27 @@ public class buttonFunctions : MonoBehaviour
 {
     public void resume()
     {
-        gamemanager.instance.StateUnpause();
+        GameManager.Instance.TogglePause();
     }
 
     public void restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        gamemanager.instance.StateUnpause();
+        GameManager.Instance.TogglePause();
     }
 
     public void quit()
     {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-    #else
+#else
         Application.Quit();
-    #endif
+#endif
     }
 
     public void respawn()
     {
-        gamemanager.instance.playerScript.SpawnPlayer();
-        gamemanager.instance.StateUnpause();
+        GameManager.Instance.playerScript.SpawnPlayer(); 
+        GameManager.Instance.TogglePause();
     }
 }

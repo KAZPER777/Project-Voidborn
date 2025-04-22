@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class JaidensCameraController : MonoBehaviour
 {
-    public JaidensController player;
+    public JaidensPlayerController player;
     [SerializeField] CharacterController controller;
 
     // Animator

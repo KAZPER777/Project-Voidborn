@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class JaidensController : MonoBehaviour, IDamageable
+public class JaidensPlayerController : MonoBehaviour, IDamageable
 {
     [Header("Movement Settings")]
     [SerializeField, Range(1f, 5f)] private float walkSpeed;
@@ -71,6 +71,8 @@ public class JaidensController : MonoBehaviour, IDamageable
         baseWalkSpeed = walkSpeed;
         SetHeight(standingHeight);
         currentHealth = maxHealth;
+
+        SpawnPlayer();
     }
 
     private void Update()
@@ -84,6 +86,7 @@ public class JaidensController : MonoBehaviour, IDamageable
             Sprint();
             HandleCrouch();
             HandleCrawl();
+            
 
             if (Input.GetButtonDown("Jump"))
             {
@@ -258,22 +261,22 @@ public class JaidensController : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        gamemanager.instance.playerHPBar.fillAmount = currentHealth / maxHealth;
+        GameManager.Instance.playerHPBar.fillAmount = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
 
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            gamemanager.instance.YouLose();
+            GameManager.Instance.YouLose.SetActive(true);
             Die();
         }
     }
 
     private IEnumerator DamageFlash()
     {
-        gamemanager.instance.playerdamagescreen.SetActive(true);
+        GameManager.Instance.playerdamagescreen.SetActive(true);
         yield return new WaitForSeconds(0.1f);
-        gamemanager.instance.playerdamagescreen.SetActive(false);
+        GameManager.Instance.playerdamagescreen.SetActive(false);
     }
 
     public void Die()
@@ -285,10 +288,10 @@ public class JaidensController : MonoBehaviour, IDamageable
 
     public void SpawnPlayer()
     {
-        transform.position = gamemanager.instance.playerSpawnPos.transform.position;
+        transform.position = GameManager.Instance.playerSpawnPos.transform.position;
         currentHealth = maxHealth;
         controller.enabled = true;
         canMove = true;
-        gamemanager.instance.playerHPBar.fillAmount = 1f;
+        GameManager.Instance.playerHPBar.fillAmount = 1f;
     }
 }

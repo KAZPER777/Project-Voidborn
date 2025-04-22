@@ -8,7 +8,7 @@ public class HealthPickUp1 : MonoBehaviour
     public GameObject player;
     public GameObject pickUpText;
     public GameObject cannotPickUpText;
-    public JaidensController Player;
+    public JaidensPlayerController Player;
     public float addHealth = 25f;
     private float currentHealth;
 
@@ -41,7 +41,7 @@ public class HealthPickUp1 : MonoBehaviour
 
     void Start()
     {
-        currentHealth = player.GetComponent<JaidensController>().currentHealth;
+        currentHealth = player.GetComponent<JaidensPlayerController>().currentHealth;
         cannotPickUpText.SetActive(false);
         pickUpText.SetActive(false);
 
@@ -52,11 +52,11 @@ public class HealthPickUp1 : MonoBehaviour
 
     void Update()
     {
-        if(inReach && Input.GetButtonDown("Interact") && player.GetComponent<JaidensController>().currentHealth < 100)
+        if(inReach && Input.GetButtonDown("Interact") && player.GetComponent<JaidensPlayerController>().currentHealth < 100)
         {
             inReach = false;
             healthPickUpSound.Play();
-            player.GetComponent<JaidensController>().currentHealth += addHealth;
+            player.GetComponent<JaidensPlayerController>().currentHealth += addHealth;
             screenFX.SetActive(true);
             pickUpOB.GetComponent<BoxCollider>().enabled = false;
             pickUpOB.GetComponent<MeshRenderer>().enabled = false;
@@ -64,7 +64,7 @@ public class HealthPickUp1 : MonoBehaviour
             StartCoroutine(TurnScreenFXOFF());
         }
 
-        else if (inReach && Input.GetButtonDown("Interact") && player.GetComponent<JaidensController>().currentHealth == 100)
+        else if (inReach && Input.GetButtonDown("Interact") && player.GetComponent<JaidensPlayerController>().currentHealth == 100)
         {
             pickUpText.SetActive(false);
             cannotPickUpText.SetActive(true);
