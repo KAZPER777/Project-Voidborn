@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,141 +10,98 @@ public class GameManager : MonoBehaviour
     public JaidensPlayerController playerScript;
     public Transform playerSpawnPos;
 
-    [Header("UI References")]
-    public Image playerHPBar;
-    public GameObject playerdamagescreen;
+    [Header("UI Elements")]
+    public GameObject winMenuUI;
     public GameObject checkpointPopup;
+    public GameObject playerdamagescreen;
     public GameObject YouLose;
+    public Image playerHPBar;
 
-    [Header("Pause Menu UI")]
+    [Header("Pause Menu")]
     public GameObject pauseMenuUI;
-    public GameObject settingsPanel;
-    public GameObject controlsPanel;
-
-    [Header("Pause Menu Buttons")]
-    public Button resumeButton;
-    public Button quitButton;
-    public Button settingsButton;
-    public Button controlsButton;
-    public Button backFromSettingsButton;
-    public Button backFromControlsButton;
-
-    [Header("Settings Controls")]
-    public Slider volumeSlider;
-    public Slider brightnessSlider;
+    public GameObject hudUI;
 
     private bool isPaused = false;
 
-    void Awake()
+    [Header("Checkpoint System")]
+    [SerializeField] private Transform currentCheckpoint;
+
+    private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(transform.root.gameObject);
+            DontDestroyOnLoad(gameObject);
         } else
         {
             Destroy(gameObject);
         }
     }
 
-    void Start()
+    private void Start()
     {
-        // Hide all panels at start
-        pauseMenuUI?.SetActive(false);
-        settingsPanel?.SetActive(false);
-        controlsPanel?.SetActive(false);
-
-        // Button Listeners
-        resumeButton?.onClick.AddListener(ResumeGame);
-        quitButton?.onClick.AddListener(QuitGame);
-        settingsButton?.onClick.AddListener(OpenSettings);
-        controlsButton?.onClick.AddListener(OpenControls);
-        backFromSettingsButton?.onClick.AddListener(BackToPauseMenu);
-        backFromControlsButton?.onClick.AddListener(BackToPauseMenu);
-
-        // Initial spawn
-        if (playerScript != null)
-        {
-            playerScript.SpawnPlayer();
-        }
+        if (winMenuUI != null) winMenuUI.SetActive(false);
+        if (checkpointPopup != null) checkpointPopup.SetActive(false);
+        if (playerdamagescreen != null) playerdamagescreen.SetActive(false);
+        if (YouLose != null) YouLose.SetActive(false);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused)
-                ResumeGame();
-            else
-                PauseGame();
+            TogglePause();
         }
     }
 
-    // ==============================
-    // Pause / Resume / Quit
-    // ==============================
-
-    public void PauseGame()
+    public void TogglePause()
     {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-        pauseMenuUI?.SetActive(true);
-        settingsPanel?.SetActive(false);
-        controlsPanel?.SetActive(false);
-        Time.timeScale = 0f;
-        isPaused = true;
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0f : 1f;
 
-        // Also hide HUD if UIManager is being used
-        UIManager.Instance?.ShowPauseMenu(true);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(isPaused);
+        if (hudUI != null) hudUI.SetActive(!isPaused);
+
+        Cursor.visible = isPaused;
+        Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
+
+        // Optional UIManager integration
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowPauseMenu(isPaused);
     }
 
     public void ResumeGame()
     {
+        isPaused = false;
+        Time.timeScale = 1f;
+
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (hudUI != null) hudUI.SetActive(true);
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        pauseMenuUI?.SetActive(false);
-        settingsPanel?.SetActive(false);
-        controlsPanel?.SetActive(false);
-        Time.timeScale = 1f;
-        isPaused = false;
 
-        UIManager.Instance?.ShowPauseMenu(false);
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowPauseMenu(false);
     }
 
-    public void QuitGame()
+    public void WinGame(Transform checkpointOverride = null)
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        Debug.Log("[GameManager] WinGame() called.");
+
+        if (checkpointOverride != null)
+            SetCheckpoint(checkpointOverride);
+
+        if (winMenuUI != null)
+            winMenuUI.SetActive(true);
+        else
+            Debug.LogWarning("[GameManager] winMenuUI not assigned!");
+
+        Time.timeScale = 0f;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
-
-    // ==============================
-    // Pause Menu Navigation
-    // ==============================
-
-    public void OpenSettings()
-    {
-        settingsPanel?.SetActive(true);
-        controlsPanel?.SetActive(false);
-    }
-
-    public void OpenControls()
-    {
-        controlsPanel?.SetActive(true);
-        settingsPanel?.SetActive(false);
-    }
-
-    public void BackToPauseMenu()
-    {
-        settingsPanel?.SetActive(false);
-        controlsPanel?.SetActive(false);
-    }
-
-    // ==============================
-    // Game Events
-    // ==============================
 
     public void ShowLoseScreen()
     {
@@ -152,27 +109,33 @@ public class GameManager : MonoBehaviour
             YouLose.SetActive(true);
     }
 
-    public void ShowCheckpointPopup()
+    public void SetCheckpoint(Transform newCheckpoint)
     {
+        currentCheckpoint = newCheckpoint;
+        Debug.Log("[GameManager] Checkpoint set to: " + newCheckpoint.name);
+
+        PlayerPrefs.SetFloat("CheckpointX", newCheckpoint.position.x);
+        PlayerPrefs.SetFloat("CheckpointY", newCheckpoint.position.y);
+        PlayerPrefs.SetFloat("CheckpointZ", newCheckpoint.position.z);
+        PlayerPrefs.Save();
+
         if (checkpointPopup != null)
+            StartCoroutine(ShowCheckpointRoutine(2f));
+    }
+
+    public void RespawnPlayer()
+    {
+        if (playerScript != null && currentCheckpoint != null)
         {
-            checkpointPopup.SetActive(true);
-            CancelInvoke(nameof(HideCheckpointPopup));
-            Invoke(nameof(HideCheckpointPopup), 2f);
+            playerScript.transform.position = currentCheckpoint.position;
+            playerScript.SpawnPlayer();
         }
     }
 
-    private void HideCheckpointPopup()
+    private IEnumerator ShowCheckpointRoutine(float duration)
     {
-        if (checkpointPopup != null)
-            checkpointPopup.SetActive(false);
-    }
-
-    public void ResetDamageScreen()
-    {
-        if (playerdamagescreen != null)
-        {
-            playerdamagescreen.SetActive(false);
-        }
+        checkpointPopup.SetActive(true);
+        yield return new WaitForSecondsRealtime(duration);
+        checkpointPopup.SetActive(false);
     }
 }

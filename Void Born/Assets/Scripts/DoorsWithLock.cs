@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class DoorsWithLock : MonoBehaviour
 {
@@ -15,13 +13,11 @@ public class DoorsWithLock : MonoBehaviour
 
     [Header("Final Door Settings")]
     public bool isFinalDoor = false;
-    public string nextSceneName = "";
-    public GameObject loadingScreenUI; // Optional fade/loading UI
 
     private bool inReach = false;
     private bool unlocked = false;
     private bool hasKey = false;
-    private bool isTransitioning = false;
+    private bool hasTriggeredWin = false;
 
     void Start()
     {
@@ -34,7 +30,7 @@ public class DoorsWithLock : MonoBehaviour
 
     void Update()
     {
-        if (isTransitioning) return;
+        if (hasTriggeredWin) return;
 
         bool interactPressed = Input.GetButtonDown("Interact");
         hasKey = KeyINV != null && KeyINV.activeInHierarchy;
@@ -80,11 +76,12 @@ public class DoorsWithLock : MonoBehaviour
             openText.SetActive(false);
             Debug.Log("[DoorsWithLock] Player exited reach zone. inReach = false.");
 
-            if (isFinalDoor && unlocked && !isTransitioning)
+            if (isFinalDoor && unlocked && !hasTriggeredWin)
             {
-                Debug.Log("[DoorsWithLock] Final door exited. Initiating transition.");
+                hasTriggeredWin = true;
+                Debug.Log("[DoorsWithLock] Final door exited. Triggering win...");
                 CloseDoor();
-                StartCoroutine(LoadNextSceneCoroutine());
+                GameManager.Instance?.WinGame();
             }
         }
     }
@@ -118,34 +115,6 @@ public class DoorsWithLock : MonoBehaviour
             bool isOpen = door.GetBool("Open");
             if (isOpen) CloseDoor();
             else OpenDoor();
-        }
-    }
-
-    private IEnumerator LoadNextSceneCoroutine()
-    {
-        isTransitioning = true;
-
-        // Optional: fade UI
-        if (loadingScreenUI != null)
-        {
-            loadingScreenUI.SetActive(true);
-        }
-
-        // Optional: short delay for door to finish animating
-        yield return new WaitForSeconds(1f);
-
-        if (!string.IsNullOrEmpty(nextSceneName))
-        {
-            Debug.Log("[DoorsWithLock] Loading next scene: " + nextSceneName);
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextSceneName);
-
-            while (!asyncLoad.isDone)
-            {
-                yield return null;
-            }
-        } else
-        {
-            Debug.LogWarning("[DoorsWithLock] No scene name provided for final door.");
         }
     }
 }
