@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,21 +32,27 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-        } else
+            
+        }
+        else
         {
             Destroy(gameObject);
         }
+
+     
     }
 
     private void Start()
     {
+        
         if (winMenuUI != null) winMenuUI.SetActive(false);
         if (checkpointPopup != null) checkpointPopup.SetActive(false);
         if (playerdamagescreen != null) playerdamagescreen.SetActive(false);
         if (YouLose != null) YouLose.SetActive(false);
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
     }
+
+
 
     private void Update()
     {
@@ -54,6 +61,8 @@ public class GameManager : MonoBehaviour
             TogglePause();
         }
     }
+
+   
 
     public void TogglePause()
     {
@@ -138,4 +147,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(duration);
         checkpointPopup.SetActive(false);
     }
+
+    
 }
