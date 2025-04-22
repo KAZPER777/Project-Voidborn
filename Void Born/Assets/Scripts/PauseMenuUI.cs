@@ -25,6 +25,8 @@ public class PauseMenuManager : MonoBehaviour
 
     void Start()
     {
+        if (resumeButton == null) Debug.LogWarning("Resume Button not assigned!");
+
         // Hide all panels at start
         pauseMenuUI.SetActive(false);
         settingsPanel.SetActive(false);

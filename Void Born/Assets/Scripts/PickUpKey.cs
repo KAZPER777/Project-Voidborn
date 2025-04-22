@@ -28,6 +28,9 @@ public class PickUpKey : MonoBehaviour
             pickUpText.SetActive(true);
 
         }
+
+        Debug.Log("[PickUpKey] Player in reach!");
+
     }
 
     void OnTriggerExit(Collider other)
@@ -50,7 +53,11 @@ public class PickUpKey : MonoBehaviour
             invOB.SetActive(true);
             pickUpText.SetActive(false);
         }
+        if (Input.GetButtonDown("Interact"))
+        {
+            Debug.Log("[PickUpKey] Interact button pressed!");
+        }
 
-        
+
     }
 }

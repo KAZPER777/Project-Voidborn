@@ -1,102 +1,151 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class DoorsWithLock : MonoBehaviour
 {
+    [Header("Door References")]
     public Animator door;
     public GameObject openText;
     public GameObject KeyINV;
 
+    [Header("Audio")]
     public AudioSource doorSound;
     public AudioSource lockedSound;
 
-    public bool inReach;
-    public bool unlocked;
-    public bool locked;
-    public bool hasKey;
+    [Header("Final Door Settings")]
+    public bool isFinalDoor = false;
+    public string nextSceneName = "";
+    public GameObject loadingScreenUI; // Optional fade/loading UI
+
+    private bool inReach = false;
+    private bool unlocked = false;
+    private bool hasKey = false;
+    private bool isTransitioning = false;
 
     void Start()
     {
         inReach = false;
-        hasKey = false;
         unlocked = false;
-        locked = true;
+        hasKey = false;
+
+        Debug.Log("[DoorsWithLock] Initialized. Door is locked.");
+    }
+
+    void Update()
+    {
+        if (isTransitioning) return;
+
+        bool interactPressed = Input.GetButtonDown("Interact");
+        hasKey = KeyINV != null && KeyINV.activeInHierarchy;
+
+        if (hasKey && !unlocked)
+            Debug.Log("[DoorsWithLock] Player has the key.");
+
+        Debug.Log("[DoorsWithLock] Debug State → inReach: " + inReach + " | hasKey: " + hasKey + " | unlocked: " + unlocked + " | InteractPressed: " + interactPressed);
+
+        if (!unlocked && hasKey && inReach && interactPressed)
+        {
+            Debug.Log("[DoorsWithLock] Unlocking and opening the door.");
+            unlocked = true;
+            OpenDoor();
+        } else if (!unlocked && inReach && interactPressed)
+        {
+            Debug.Log("[DoorsWithLock] Door is locked. Playing locked sound.");
+            lockedSound?.Play();
+        } else if (unlocked && inReach && interactPressed)
+        {
+            Debug.Log("[DoorsWithLock] Toggling door.");
+            ToggleDoor();
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Reach")
+        Debug.Log("[DoorsWithLock] Trigger Entered by: " + other.name + " | Tag: " + other.tag);
+
+        if (other.CompareTag("Player"))
         {
             inReach = true;
             openText.SetActive(true);
+            Debug.Log("[DoorsWithLock] Player entered reach zone. inReach = true.");
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Reach")
+        if (other.CompareTag("Player"))
         {
             inReach = false;
             openText.SetActive(false);
+            Debug.Log("[DoorsWithLock] Player exited reach zone. inReach = false.");
+
+            if (isFinalDoor && unlocked && !isTransitioning)
+            {
+                Debug.Log("[DoorsWithLock] Final door exited. Initiating transition.");
+                CloseDoor();
+                StartCoroutine(LoadNextSceneCoroutine());
+            }
         }
     }
 
-
-
-
-
-    void Update()
+    private void OpenDoor()
     {
-        if(KeyINV.activeInHierarchy)
-        {
-            locked = false;
-            hasKey = true;
-        }  
-        
-        else
-        {
-            hasKey = false;
-        }
-
-        if (hasKey && inReach && Input.GetButtonDown("Interact"))
-        {
-            unlocked = true;
-            DoorOpens();
-        }
-
-        else
-        {
-            DoorCloses();
-        }
-
-        if (locked && inReach && Input.GetButtonDown("Interact"))
-        {
-            lockedSound.Play();
-            
-        }
-
-    }
-    void DoorOpens ()
-    {
-        if (unlocked)
+        Debug.Log("[DoorsWithLock] Setting Animator: Open = true, Closed = false");
+        if (door != null)
         {
             door.SetBool("Open", true);
             door.SetBool("Closed", false);
-            doorSound.Play();
         }
-
+        doorSound?.Play();
     }
 
-    void DoorCloses()
+    private void CloseDoor()
     {
-        if (unlocked)
+        Debug.Log("[DoorsWithLock] Setting Animator: Open = false, Closed = true");
+        if (door != null)
         {
             door.SetBool("Open", false);
             door.SetBool("Closed", true);
         }
-
+        doorSound?.Play();
     }
 
+    private void ToggleDoor()
+    {
+        if (door != null)
+        {
+            bool isOpen = door.GetBool("Open");
+            if (isOpen) CloseDoor();
+            else OpenDoor();
+        }
+    }
 
+    private IEnumerator LoadNextSceneCoroutine()
+    {
+        isTransitioning = true;
+
+        // Optional: fade UI
+        if (loadingScreenUI != null)
+        {
+            loadingScreenUI.SetActive(true);
+        }
+
+        // Optional: short delay for door to finish animating
+        yield return new WaitForSeconds(1f);
+
+        if (!string.IsNullOrEmpty(nextSceneName))
+        {
+            Debug.Log("[DoorsWithLock] Loading next scene: " + nextSceneName);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextSceneName);
+
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+        } else
+        {
+            Debug.LogWarning("[DoorsWithLock] No scene name provided for final door.");
+        }
+    }
 }

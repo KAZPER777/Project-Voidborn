@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,10 +11,27 @@ public class GameManager : MonoBehaviour
     public Transform playerSpawnPos;
 
     [Header("UI References")]
-    public Image playerHPBar;                // Assign Image component directly
+    public Image playerHPBar;
     public GameObject playerdamagescreen;
     public GameObject checkpointPopup;
     public GameObject YouLose;
+
+    [Header("Pause Menu UI")]
+    public GameObject pauseMenuUI;
+    public GameObject settingsPanel;
+    public GameObject controlsPanel;
+
+    [Header("Pause Menu Buttons")]
+    public Button resumeButton;
+    public Button quitButton;
+    public Button settingsButton;
+    public Button controlsButton;
+    public Button backFromSettingsButton;
+    public Button backFromControlsButton;
+
+    [Header("Settings Controls")]
+    public Slider volumeSlider;
+    public Slider brightnessSlider;
 
     private bool isPaused = false;
 
@@ -29,31 +47,104 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        // Hide all panels at start
+        pauseMenuUI?.SetActive(false);
+        settingsPanel?.SetActive(false);
+        controlsPanel?.SetActive(false);
+
+        // Button Listeners
+        resumeButton?.onClick.AddListener(ResumeGame);
+        quitButton?.onClick.AddListener(QuitGame);
+        settingsButton?.onClick.AddListener(OpenSettings);
+        controlsButton?.onClick.AddListener(OpenControls);
+        backFromSettingsButton?.onClick.AddListener(BackToPauseMenu);
+        backFromControlsButton?.onClick.AddListener(BackToPauseMenu);
+
+        // Initial spawn
+        if (playerScript != null)
+        {
+            playerScript.SpawnPlayer();
+        }
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePause();
+            if (isPaused)
+                ResumeGame();
+            else
+                PauseGame();
         }
     }
 
-    public void TogglePause()
-    {
-        isPaused = !isPaused;
-        Time.timeScale = isPaused ? 0f : 1f;
+    // ==============================
+    // Pause / Resume / Quit
+    // ==============================
 
-        if (UIManager.Instance != null)
-            UIManager.Instance.ShowPauseMenu(isPaused);
+    public void PauseGame()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        pauseMenuUI?.SetActive(true);
+        settingsPanel?.SetActive(false);
+        controlsPanel?.SetActive(false);
+        Time.timeScale = 0f;
+        isPaused = true;
+
+        // Also hide HUD if UIManager is being used
+        UIManager.Instance?.ShowPauseMenu(true);
     }
 
     public void ResumeGame()
     {
-        isPaused = false;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        pauseMenuUI?.SetActive(false);
+        settingsPanel?.SetActive(false);
+        controlsPanel?.SetActive(false);
         Time.timeScale = 1f;
+        isPaused = false;
 
-        if (UIManager.Instance != null)
-            UIManager.Instance.ShowPauseMenu(false);
+        UIManager.Instance?.ShowPauseMenu(false);
     }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    // ==============================
+    // Pause Menu Navigation
+    // ==============================
+
+    public void OpenSettings()
+    {
+        settingsPanel?.SetActive(true);
+        controlsPanel?.SetActive(false);
+    }
+
+    public void OpenControls()
+    {
+        controlsPanel?.SetActive(true);
+        settingsPanel?.SetActive(false);
+    }
+
+    public void BackToPauseMenu()
+    {
+        settingsPanel?.SetActive(false);
+        controlsPanel?.SetActive(false);
+    }
+
+    // ==============================
+    // Game Events
+    // ==============================
 
     public void ShowLoseScreen()
     {
@@ -61,8 +152,27 @@ public class GameManager : MonoBehaviour
             YouLose.SetActive(true);
     }
 
-    public void QuitGame()
+    public void ShowCheckpointPopup()
     {
-        Application.Quit();
+        if (checkpointPopup != null)
+        {
+            checkpointPopup.SetActive(true);
+            CancelInvoke(nameof(HideCheckpointPopup));
+            Invoke(nameof(HideCheckpointPopup), 2f);
+        }
+    }
+
+    private void HideCheckpointPopup()
+    {
+        if (checkpointPopup != null)
+            checkpointPopup.SetActive(false);
+    }
+
+    public void ResetDamageScreen()
+    {
+        if (playerdamagescreen != null)
+        {
+            playerdamagescreen.SetActive(false);
+        }
     }
 }

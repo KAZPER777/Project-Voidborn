@@ -288,10 +288,21 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
     public void SpawnPlayer()
     {
-        transform.position = GameManager.Instance.playerSpawnPos.transform.position;
+        if (GameManager.Instance != null && GameManager.Instance.playerSpawnPos != null)
+        {
+            transform.position = GameManager.Instance.playerSpawnPos.position;
+            Debug.Log("[SpawnPlayer] Teleported to spawn position: " + transform.position);
+        } else
+        {
+            Debug.LogWarning("[SpawnPlayer] Spawn point is missing!");
+        }
+
         currentHealth = maxHealth;
-        controller.enabled = true;
         canMove = true;
-        GameManager.Instance.playerHPBar.fillAmount = 1f;
+        controller.enabled = true;
+
+        if (GameManager.Instance != null && GameManager.Instance.playerHPBar != null)
+            GameManager.Instance.playerHPBar.fillAmount = 1f;
     }
+
 }

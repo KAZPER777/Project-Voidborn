@@ -1,17 +1,29 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class buttonFunctions : MonoBehaviour
 {
     public void resume()
     {
-        GameManager.Instance.TogglePause();
+        GameManager.Instance.ResumeGame();
     }
 
     public void restart()
     {
+        GameManager.Instance.ResumeGame();
+        StartCoroutine(RestartScene());
+    }
+
+    private IEnumerator RestartScene()
+    {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        GameManager.Instance.TogglePause();
+        yield return null; // Wait for the next frame
+
+        // Wait until the player script is assigned again
+        yield return new WaitUntil(() => GameManager.Instance.playerScript != null);
+
+        GameManager.Instance.playerScript.SpawnPlayer();
     }
 
     public void quit()
@@ -25,7 +37,10 @@ public class buttonFunctions : MonoBehaviour
 
     public void respawn()
     {
-        GameManager.Instance.playerScript.SpawnPlayer(); 
-        GameManager.Instance.TogglePause();
+        if (GameManager.Instance.playerScript != null)
+        {
+            GameManager.Instance.playerScript.SpawnPlayer();
+            GameManager.Instance.ResumeGame();
+        }
     }
 }
