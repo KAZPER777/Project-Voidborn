@@ -6,6 +6,7 @@ TagManager:
   tags:
   - level exit
   - Reach
+  - Trees
   layers:
   - Default
   - TransparentFX
