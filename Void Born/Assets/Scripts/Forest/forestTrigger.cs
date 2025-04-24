@@ -10,7 +10,7 @@ public class forestTrigger : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Forest Section"))
         {
-            Instantiate(section, new Vector3(100,0,0), Quaternion.identity);
+            Instantiate(section, new Vector3(50,0,0), Quaternion.identity);
         }
     }
 }
