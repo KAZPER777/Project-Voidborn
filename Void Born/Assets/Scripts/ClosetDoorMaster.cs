@@ -28,13 +28,14 @@ public class ClosetDoorMaster : MonoBehaviour
 
     private enum DoorState { Closed, Opening, OpenWaiting, Closing }
     private DoorState doorState = DoorState.Closed;
-    private float doorLerpT = 0f;
 
     private bool isPlayerInside = false;
     private bool isEntering = false;
     private bool isExiting = false;
-    private bool entryCoroutineRunning = false;
-    private bool isTransitioning = false;
+    private bool isPendingEntry = false;
+
+    private float doorLerpT = 0f;
+    private float exitCooldown = 0f;
 
     private Vector3 cameraDefaultPos;
     private Vector3 cameraTargetPos;
@@ -43,32 +44,33 @@ public class ClosetDoorMaster : MonoBehaviour
     {
         cameraDefaultPos = cameraRig.localPosition;
         cameraTargetPos = cameraDefaultPos;
-        transform.localPosition = closedPosition.localPosition; // start closed
     }
 
     void Update()
     {
-        float distanceToPlayer = Vector3.Distance(player.transform.position, triggerPoint.position);
-        bool isCloseEnough = distanceToPlayer <= triggerDistance;
+        // Proximity + Look Check
+        float distance = Vector3.Distance(player.transform.position, triggerPoint.position);
+        bool isCloseEnough = distance <= triggerDistance;
 
         bool isLookingAtCloset = false;
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, 3f))
         {
             if (hit.transform == transform || hit.transform.IsChildOf(transform))
-            {
                 isLookingAtCloset = true;
-            }
         }
 
-        // Mouse 1 to Enter or Exit
-        if (!isEntering && !isExiting && !isTransitioning && Input.GetMouseButtonDown(0))
+        // Reset exitCooldown
+        if (exitCooldown > 0f)
+            exitCooldown -= Time.deltaTime;
 
+        // Input: Try Enter or Exit
+        if (Input.GetMouseButtonDown(0) && exitCooldown <= 0f)
         {
             if (isPlayerInside)
             {
-                if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E)) return;
-                StartExit();
+                if (!isEntering && !isExiting)
+                    StartExit();
             } else if (isCloseEnough && isLookingAtCloset && doorState == DoorState.Closed)
             {
                 doorLerpT = 0f;
@@ -76,33 +78,28 @@ public class ClosetDoorMaster : MonoBehaviour
             }
         }
 
-        // === Door Movement ===
+        // Door Animation
         if (doorState == DoorState.Opening)
         {
             doorLerpT += Time.deltaTime * slideSpeed;
-            float t = Mathf.Clamp01(doorLerpT);
-            transform.localPosition = Vector3.Lerp(closedPosition.localPosition, openPosition.localPosition, t);
-
-            if (t >= 1f)
+            transform.position = Vector3.Lerp(closedPosition.position, openPosition.position, Mathf.Clamp01(doorLerpT));
+            if (doorLerpT >= 1f)
             {
-                doorLerpT = 0f;
                 doorState = DoorState.OpenWaiting;
-                StartCoroutine(WaitAndCloseDoorAfterEntry());
+                isPendingEntry = true;
+                StartCoroutine(WaitAndCloseDoor());
             }
         } else if (doorState == DoorState.Closing)
         {
             doorLerpT += Time.deltaTime * slideSpeed * 1.5f;
-            float t = Mathf.Clamp01(doorLerpT);
-            transform.localPosition = Vector3.Lerp(openPosition.localPosition, closedPosition.localPosition, t);
-
-            if (t >= 1f)
+            transform.position = Vector3.Lerp(openPosition.position, closedPosition.position, Mathf.Clamp01(doorLerpT));
+            if (doorLerpT >= 1f)
             {
-                doorLerpT = 0f;
                 doorState = DoorState.Closed;
             }
         }
 
-        // === Player Movement ===
+        // Move Player
         if (isEntering)
         {
             MoveAndRotatePlayer(enterPoint);
@@ -122,10 +119,14 @@ public class ClosetDoorMaster : MonoBehaviour
                 isExiting = false;
                 isPlayerInside = false;
                 EnablePlayerMovement(true);
+                exitCooldown = 0.5f;
+                isPendingEntry = false;
+                doorLerpT = 0f;
+                doorState = DoorState.Closing;
             }
         }
 
-        // === Peeking ===
+        // Peeking inside closet
         if (isPlayerInside && !isEntering && !isExiting)
         {
             if (Input.GetKey(KeyCode.Q))
@@ -139,80 +140,39 @@ public class ClosetDoorMaster : MonoBehaviour
         }
     }
 
-    IEnumerator WaitAndCloseDoorAfterEntry()
+    IEnumerator WaitAndCloseDoor()
     {
-        entryCoroutineRunning = true;
-
         yield return new WaitForSeconds(0.2f);
 
-        if (!isExiting)
+        if (!isExiting && isPendingEntry)
+        {
             StartEntry();
 
-        while (isEntering)
-            yield return null;
+            while (isEntering)
+                yield return null;
 
-        yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.1f);
 
-        if (!isExiting)
-        {
-            doorLerpT = 0f;
-            doorState = DoorState.Closing;
+            if (isPlayerInside)
+            {
+                doorLerpT = 0f;
+                doorState = DoorState.Closing;
+            }
         }
-
-        entryCoroutineRunning = false;
-        entryCoroutineRunning = false;
-        isTransitioning = false;
     }
-
-    IEnumerator WaitAndCloseDoorAfterExit()
-    {
-        while (isExiting)
-            yield return null;
-
-        yield return new WaitForSeconds(0.1f);
-
-        doorLerpT = 0f;
-        doorState = DoorState.Closing;
-        doorLerpT = 0f;
-        doorState = DoorState.Closing;
-
-        yield return new WaitUntil(() => doorState == DoorState.Closed);
-
-        isTransitioning = false;
-
-    }
-
 
     void StartEntry()
     {
-        isTransitioning = true;
         isEntering = true;
-        isPlayerInside = true;
         EnablePlayerMovement(false);
     }
-
 
     void StartExit()
     {
-        if (entryCoroutineRunning)
-        {
-            StopAllCoroutines();
-            entryCoroutineRunning = false;
-            isEntering = false;
-        }
-
-        isTransitioning = true;
         isExiting = true;
-        isPlayerInside = false;
+        isPendingEntry = false;
         EnablePlayerMovement(false);
-
-        doorLerpT = 0f;
-        doorState = DoorState.Opening;
-
-        StartCoroutine(WaitAndCloseDoorAfterExit());
     }
-
-
 
     void MoveAndRotatePlayer(Transform target)
     {
@@ -228,11 +188,11 @@ public class ClosetDoorMaster : MonoBehaviour
         return dist < 0.05f && angle < 2f;
     }
 
-    void EnablePlayerMovement(bool state)
+    void EnablePlayerMovement(bool canMove)
     {
         var controller = player.GetComponent<JaidensController>();
         if (controller != null)
-            controller.canMove = state;
+            controller.canMove = canMove;
     }
 
     public bool GetIsPlayerInside() => isPlayerInside;
