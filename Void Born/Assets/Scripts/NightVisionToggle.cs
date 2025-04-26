@@ -3,14 +3,17 @@ using UnityEngine;
 public class NightVisionToggle : MonoBehaviour
 {
     public GameObject nightVisionOverlay;
-    private bool isActive = false;
+    private bool nightVisionActive = false;
 
-    void Update()
+    private void Update()
     {
+        if (!GameManager.Instance.gameStarted) return; 
+
         if (Input.GetKeyDown(KeyCode.N))
         {
-            isActive = !isActive;
-            nightVisionOverlay.SetActive(isActive);
+            nightVisionActive = !nightVisionActive;
+            if (nightVisionOverlay != null)
+                nightVisionOverlay.SetActive(nightVisionActive);
         }
     }
 }

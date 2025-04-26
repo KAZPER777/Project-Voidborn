@@ -1,40 +1,29 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    [Header("UI Panels")]
-    public GameObject pauseMenu;
-    public GameObject hud;
+    public GameObject pauseMenuUI;
+    public GameObject gameplayUI;
 
-    [Header("Battery")]
-    public Image batteryBar;
-    public TMP_Text batteryText;
-
-    void Awake()
+    private void Awake()
     {
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
-    }
-
-    public void UpdateBattery(float value)
-    {
-        batteryBar.fillAmount = value;
-        batteryText.text = Mathf.RoundToInt(value * 100f) + "%";
     }
 
     public void ShowPauseMenu(bool show)
     {
-        pauseMenu.SetActive(show);
-        hud.SetActive(!show);
+        if (pauseMenuUI != null)
+            pauseMenuUI.SetActive(show);
+    }
+
+    public void ShowGameplayUI(bool show)
+    {
+        if (gameplayUI != null)
+            gameplayUI.SetActive(show);
     }
 }
