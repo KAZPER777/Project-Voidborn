@@ -3,6 +3,9 @@ using System.Collections;
 
 public class ClosetDoorMaster : MonoBehaviour
 {
+    private StalkerAI stalker;
+
+
     [Header("Door")]
     public Transform openPosition;
     public Transform closedPosition;
@@ -108,6 +111,7 @@ public class ClosetDoorMaster : MonoBehaviour
                 isEntering = false;
                 isPlayerInside = true;
                 EnablePlayerMovement(true);
+                stalker.CantSeePlayer();
             }
         }
 
@@ -190,7 +194,7 @@ public class ClosetDoorMaster : MonoBehaviour
 
     void EnablePlayerMovement(bool canMove)
     {
-        var controller = player.GetComponent<JaidensController>();
+        var controller = player.GetComponent<JaidensPlayerController>();
         if (controller != null)
             controller.canMove = canMove;
     }

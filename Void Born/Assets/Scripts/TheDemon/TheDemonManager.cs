@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -27,7 +28,8 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
     
     public void LookingAtDemon()
     {
-        if(visiblity.isVisible)
+        float distance = Vector3.Distance(transform.position, playerTransform.transform.position);
+        if(visiblity.isVisible && distance < 20)
         {
 
         }

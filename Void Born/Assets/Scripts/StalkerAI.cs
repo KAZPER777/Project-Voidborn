@@ -98,7 +98,8 @@ public class StalkerAI : MonoBehaviour
         //if hasnt raged, checks if the player is staring and increments time if they are
         if (!hasRaged)
         {
-           if(checkFlashlight.CheckInFlashLightRange())
+          
+            /* if(checkFlashlight.CheckInFlashLightRange())
            {
                 
                 Debug.Log("Working?");
@@ -107,7 +108,7 @@ public class StalkerAI : MonoBehaviour
            else
            {
                 Debug.Log("Not Working");
-           }
+           }*/
 
             if (isPlayerStaring)
             {
@@ -147,22 +148,8 @@ public class StalkerAI : MonoBehaviour
                 stalkTimer -= Time.deltaTime;
                 if(stalkTimer <= 0f)
                 {
-                    hasRaged = false;
-                    isChasing = false;
-                    stalkTimer = 1f;
-                    animationReset -= Time.deltaTime;
-                    if(agent.velocity.magnitude > 0.1f && agent.remainingDistance > agent.stoppingDistance)
-                    {
-                        agent.speed = 4;
-                        animator.SetBool(IS_ENRAGED, false);
-                        animator.SetBool(IS_RUNNING, false);
-                    }
-                    if (eyeRenderer != null)
-                    { 
-                        eyeRenderer.material.SetColor("_EmissionColor", originalEmissionColor);
-                        DynamicGI.SetEmissive(eyeRenderer, originalEmissionColor);
-                    }
 
+                    CantSeePlayer();
                 }
             }
             
@@ -306,6 +293,24 @@ public class StalkerAI : MonoBehaviour
 
         Debug.Log("Monster cannot see player.. Monster will lose aggro soon.");
         return false;
+    }
+
+    public void CantSeePlayer()
+    {
+        hasRaged = false;
+        isChasing = false;
+        stalkTimer = 1f;
+        if (agent.velocity.magnitude > 0.1f && agent.remainingDistance > agent.stoppingDistance)
+        {
+            agent.speed = 4;
+            animator.SetBool(IS_ENRAGED, false);
+            animator.SetBool(IS_RUNNING, false);
+        }
+        if (eyeRenderer != null)
+        {
+            eyeRenderer.material.SetColor("_EmissionColor", originalEmissionColor);
+            DynamicGI.SetEmissive(eyeRenderer, originalEmissionColor);
+        }
     }
     //Stalker roam logic 
     Vector3 PickRoamDestination()
