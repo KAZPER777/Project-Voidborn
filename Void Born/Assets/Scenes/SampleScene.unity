@@ -21870,6 +21870,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5825221148752148929, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1061248430}
+    - targetCorrespondingSourceObject: {fileID: 5825221148752148929, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1061248432}
+    - targetCorrespondingSourceObject: {fileID: 5825221148752148929, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1061248431}
   m_SourcePrefab: {fileID: 100100000, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
 --- !u!4 &1061248428 stripped
 Transform:
@@ -21893,8 +21899,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77a39f0eb319f9d448f4c63fe44c7db1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyOB: {fileID: 0}
+  keyOB: {fileID: 1925819492}
   invOB: {fileID: 2019067253}
+  pickUpText: {fileID: 1218716546}
+  keySound: {fileID: 1141732013}
+  inReach: 0
+--- !u!114 &1061248431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061248429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77a39f0eb319f9d448f4c63fe44c7db1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyOB: {fileID: 1456048016}
+  invOB: {fileID: 1809693810}
+  pickUpText: {fileID: 1218716546}
+  keySound: {fileID: 1141732013}
+  inReach: 0
+--- !u!114 &1061248432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061248429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77a39f0eb319f9d448f4c63fe44c7db1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyOB: {fileID: 1214978029}
+  invOB: {fileID: 492789109}
   pickUpText: {fileID: 1218716546}
   keySound: {fileID: 1141732013}
   inReach: 0
@@ -23577,7 +23617,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1141732012
 Transform:
   m_ObjectHideFlags: 0
@@ -28891,7 +28931,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 68bf88d3ca420934b89c7bbb68447c40, type: 2}
+  - {fileID: 2100000, guid: c653bc76aad6d7345b4ff19949fa73fa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
