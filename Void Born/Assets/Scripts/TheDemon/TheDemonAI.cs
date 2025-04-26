@@ -11,6 +11,28 @@ public class TheDemonAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (TheDemonManager.instance != null)
+        {
+            TheDemonManager.instance.LookingAtDemon(10);
+            TheDemonManager.instance.DrawRay();
+
+            if (TheDemonManager.instance.CheckVisibility())
+            {
+               
+                Debug.Log("Is true");
+            }
+
+            TheDemonManager.instance.OnSanityZero();
+            TheDemonManager.instance.TeleportDemon();
+
+        }
+
+
         
+
+       
+
+        
+
     }
 }

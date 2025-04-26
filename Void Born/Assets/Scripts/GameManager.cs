@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public GameObject playerdamagescreen;
     public GameObject YouLose;
     public Image playerHPBar;
+    public Image sanityBar;
 
     [Header("Pause Menu")]
     public GameObject pauseMenuUI;

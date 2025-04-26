@@ -9,6 +9,10 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
     public bool canMove = true;
 
+    [Header("Sanity")]
+    public int maxSanity;
+    public int currentSanity;
+
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
     [SerializeField] private float buildUpMult = 1.25f;
