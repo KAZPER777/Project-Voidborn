@@ -12,7 +12,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
     [SerializeField] private float buildUpMult = 1.25f;
-    [SerializeField] private float fullSprintMult = 1.5f;
+    [SerializeField] private float fullSprintMult = 20f;
 
     [Header("Gravity Settings")]
     [SerializeField] private float gravity = 9.81f;

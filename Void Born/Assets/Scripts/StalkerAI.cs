@@ -1,5 +1,7 @@
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEditor.Analytics;
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,6 +16,10 @@ public class StalkerAI : MonoBehaviour
     public CheckVisiblity check;
     public Renderer eyeRenderer;
     public Collider monsterCollider;
+    public CharacterController playerController;
+    public LayerMask player;
+    private Color originalEmissionColor;
+    public FlashlightCheck checkFlashlight;
 
 
     public Color rageColor = Color.red;
@@ -23,7 +29,8 @@ public class StalkerAI : MonoBehaviour
     public float ragePauseDuration = 2.61f;
     public float stareDurationThreshold = 3f;
     private float currentStareTime = 0f;
-
+    private float stalkTimer = 1f;
+    private float animationReset = 1.5f;
 
     //Damage
     public float damageAmount = 100f;
@@ -59,10 +66,17 @@ public class StalkerAI : MonoBehaviour
 
         if (monsterCollider == null)
             monsterCollider = GetComponent<Collider>();
+
+        if (eyeRenderer != null)
+        {
+            originalEmissionColor = eyeRenderer.material.GetColor("_EmissionColor");
+        }
     }
 
     void Update()
     {
+        CanSeePlayer();
+        CanSeePlayerEnraged();
         Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); //Where raycast should point
         RaycastHit hit;
 
@@ -84,6 +98,17 @@ public class StalkerAI : MonoBehaviour
         //if hasnt raged, checks if the player is staring and increments time if they are
         if (!hasRaged)
         {
+           if(checkFlashlight.CheckInFlashLightRange())
+           {
+                
+                Debug.Log("Working?");
+                hasRaged = true;
+           }
+           else
+           {
+                Debug.Log("Not Working");
+           }
+
             if (isPlayerStaring)
             {
                 currentStareTime += Time.deltaTime;
@@ -114,10 +139,33 @@ public class StalkerAI : MonoBehaviour
         //Logic for when stalker starts chasing
         if (isChasing)
         {
-            agent.speed = 15;
-            Vector3 playerPos = playerTransform.position + Vector3.up * -1f;
+            agent.speed = 6;
+            Vector3 playerPos = playerTransform.position + Vector3.up * 1f;
             agent.SetDestination(playerPos);
+            if(!CanSeePlayerEnraged()  && isChasing)
+            {
+                stalkTimer -= Time.deltaTime;
+                if(stalkTimer <= 0f)
+                {
+                    hasRaged = false;
+                    isChasing = false;
+                    stalkTimer = 1f;
+                    animationReset -= Time.deltaTime;
+                    if(agent.velocity.magnitude > 0.1f && agent.remainingDistance > agent.stoppingDistance)
+                    {
+                        agent.speed = 4;
+                        animator.SetBool(IS_ENRAGED, false);
+                        animator.SetBool(IS_RUNNING, false);
+                    }
+                    if (eyeRenderer != null)
+                    { 
+                        eyeRenderer.material.SetColor("_EmissionColor", originalEmissionColor);
+                        DynamicGI.SetEmissive(eyeRenderer, originalEmissionColor);
+                    }
 
+                }
+            }
+            
             float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
             if (distanceToPlayer <= damageRange && damageTimer <= 0f)
             {
@@ -204,6 +252,61 @@ public class StalkerAI : MonoBehaviour
         Debug.Log("Monster is now chasing the player.");
     }
 
+
+
+
+
+
+    private bool CanSeePlayer()
+    {
+        RaycastHit hit;
+        Vector3 monsterHeight = transform.position + Vector3.up * 1f;
+        Vector3 playerHeight = playerTransform.transform.position + Vector3.up * 1f;
+        Vector3 directionToPlayer = (playerHeight - monsterHeight).normalized;
+        Debug.DrawRay(monsterHeight, directionToPlayer * 6f, Color.yellow);
+        if (Physics.Raycast(monsterHeight, directionToPlayer, out hit, 6f))
+        {
+            // Check if the raycast hit the player
+            if (hit.transform == playerTransform)
+            {
+                Debug.Log("Monster can see player (nothing blocking view)");
+                return true;
+            }
+            else
+            {
+                Debug.Log("Something is blocking the view: " + hit.transform.name);
+            }
+        }
+
+        Debug.Log("Monster cannot see player");
+        return false;
+    }
+
+    //The purpose of this raycast is to check the range of which the stalker can see the player while enraged. *2 range increase
+    private bool CanSeePlayerEnraged()
+    {
+        RaycastHit hit;
+        Vector3 monsterHeight = transform.position + Vector3.up * 1f;
+        Vector3 playerHeight = playerTransform.transform.position + Vector3.up * 1f;
+        Vector3 directionToPlayer = (playerHeight - monsterHeight).normalized;
+        Debug.DrawRay(monsterHeight, directionToPlayer * 20f, Color.red);
+        if (Physics.Raycast(monsterHeight, directionToPlayer, out hit, 20f))
+        {
+            // Check if the raycast hit the player
+            if (hit.transform == playerTransform)
+            {
+                Debug.Log("Monster can see player while Enraged! (nothing blocking view)");
+                return true;
+            }
+            else
+            {
+                Debug.Log("Something is blocking the view.. Monster will lose aggro soon.");
+            }
+        }
+
+        Debug.Log("Monster cannot see player.. Monster will lose aggro soon.");
+        return false;
+    }
     //Stalker roam logic 
     Vector3 PickRoamDestination()
     {
