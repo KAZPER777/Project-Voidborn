@@ -23,21 +23,18 @@ public class GameManager : MonoBehaviour
     public GameObject hudUI;
 
     private bool isPaused = false;
+    public bool gameStarted = false; 
 
     [Header("Checkpoint System")]
     [SerializeField] private Transform currentCheckpoint;
 
-    private void Awake()
+    private private void Awake()
     {
         if (Instance == null)
-        {
             Instance = this;
             
-        }
         else
-        {
             Destroy(gameObject);
-        }
 
      
     }
@@ -54,8 +51,10 @@ public class GameManager : MonoBehaviour
 
 
 
-    private void Update()
+    private private void Update()
     {
+        if (!gameStarted) return; // Only allow pause if game started
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
@@ -64,8 +63,18 @@ public class GameManager : MonoBehaviour
 
    
 
+    public void StartGame()
+    {
+        gameStarted = true;
+        Time.timeScale = 1f;
+        UIManager.Instance.ShowPauseMenu(false);
+        UIManager.Instance.ShowGameplayUI(true);
+    }
+
     public void TogglePause()
     {
+        if (!gameStarted) return; 
+
         isPaused = !isPaused;
         Time.timeScale = isPaused ? 0f : 1f;
 
@@ -82,6 +91,8 @@ public class GameManager : MonoBehaviour
 
     public void ResumeGame()
     {
+        if (!gameStarted) return;
+
         isPaused = false;
         Time.timeScale = 1f;
 
