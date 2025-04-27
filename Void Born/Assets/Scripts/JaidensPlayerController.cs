@@ -7,7 +7,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     [SerializeField, Range(1f, 5f)] private float walkSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crouchSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
-    [SerializeField] private bool canMove = true;
+    public bool canMove = true;
 
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
@@ -82,6 +82,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
         if (!isVaulting && canMove)
         {
+            if (!canMove) return;
+
             Movement();
             Sprint();
             HandleCrouch();
