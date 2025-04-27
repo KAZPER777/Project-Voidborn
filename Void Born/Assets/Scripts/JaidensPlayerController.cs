@@ -62,6 +62,15 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     public Vector3 moveDir;
     private Vector3 playerVel;
 
+    //Sound
+    [Header("Sound")]
+    [SerializeField] private AudioClip walkClip;
+    [SerializeField] private AudioClip sprintClip;
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private AudioClip breathClip;
+    [SerializeField] private AudioClip hurtClip;
+
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -92,6 +101,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
             {
                 HandleJumpOrStand();
                 TryVault();
+                
             }
         }
 
@@ -108,6 +118,11 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
+
+        if (isMoving)
+        {
+            soundManager.instance.playSound(walkClip, transform, 1f);
+        }
     }
 
     private void Sprint()
@@ -131,7 +146,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
                 isRunning = true;
                 isJogging = false;
 
-                soundManager.playSound(soundManager.soundType.Sprint, 1);
+               
             }
         } else ResetSprintState();
     }
@@ -220,7 +235,6 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         }
 
         transform.position = end;
-        soundManager.playSound(soundManager.soundType.Jump, 1);
         controller.enabled = true;
         canMove = true;
         isVaulting = false;
@@ -266,7 +280,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         currentHealth -= amount;
         GameManager.Instance.playerHPBar.fillAmount = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
-        soundManager.playSound(soundManager.soundType.Hurt, 1);
+       
 
         if (currentHealth <= 0)
         {
