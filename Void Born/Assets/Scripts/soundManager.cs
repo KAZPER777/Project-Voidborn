@@ -1,31 +1,36 @@
-using UnityEngine;
-using System;
-using System.Runtime.CompilerServices;
+﻿using UnityEngine;
 
 public class soundManager : MonoBehaviour
 {
-   
-
     public static soundManager instance;
 
-    [SerializeField] private AudioSource sound;
+    [SerializeField] private AudioSource soundPrefab;
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject); // Optional but recommended
+        } else
+        {
+            Destroy(gameObject);
         }
     }
 
-    public void playSound(AudioClip clip,Transform soundTransform,float volume)
+    public void playSound(AudioClip clip, Transform soundTransform, float volume)
     {
-        AudioSource source = Instantiate(sound, soundTransform.position, Quaternion.identity);
+        if (soundPrefab == null)
+        {
+            Debug.LogError("❌ Sound Prefab is not assigned in SoundManager!");
+            return;
+        }
+
+        AudioSource source = Instantiate(soundPrefab, soundTransform.position, Quaternion.identity);
         source.clip = clip;
         source.volume = volume;
 
         source.Play();
-        float clipLength = source.clip.length;
-        Destroy(source.gameObject,clipLength);
+        Destroy(source.gameObject, source.clip.length);
     }
 }

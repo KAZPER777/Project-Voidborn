@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
@@ -42,5 +42,18 @@ public class buttonFunctions : MonoBehaviour
             GameManager.Instance.playerScript.SpawnPlayer();
             GameManager.Instance.ResumeGame();
         }
+    }
+
+    public void startGame()
+    {
+        GameManager.Instance.ResumeGame();
+        StartCoroutine(LoadGameplayScene());
+    }
+
+    private IEnumerator LoadGameplayScene()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        SceneManager.LoadScene("Mansion");
     }
 }

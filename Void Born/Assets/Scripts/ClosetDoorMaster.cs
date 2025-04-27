@@ -190,7 +190,7 @@ public class ClosetDoorMaster : MonoBehaviour
 
     void EnablePlayerMovement(bool canMove)
     {
-        var controller = player.GetComponent<JaidensController>();
+        var controller = player.GetComponent<JaidensPlayerController>();
         if (controller != null)
             controller.canMove = canMove;
     }

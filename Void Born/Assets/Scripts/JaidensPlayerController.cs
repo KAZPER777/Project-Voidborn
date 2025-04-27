@@ -281,7 +281,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        GameManager.Instance.playerHPBar.fillAmount = currentHealth / maxHealth;
+        GameManager.Instance.playerHPBar.value = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
         soundManager.instance.playSound(hurtClip, transform, 1f);
        
@@ -289,16 +289,16 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            GameManager.Instance.YouLose.SetActive(true);
+            GameManager.Instance.youLoseScreen.SetActive(true);
             Die();
         }
     }
 
     private IEnumerator DamageFlash()
     {
-        GameManager.Instance.playerdamagescreen.SetActive(true);
+        GameManager.Instance.playerDamageScreen.SetActive(true);
         yield return new WaitForSeconds(0.1f);
-        GameManager.Instance.playerdamagescreen.SetActive(false);
+        GameManager.Instance.playerDamageScreen.SetActive(false);
     }
 
     public void Die()
@@ -324,7 +324,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.enabled = true;
 
         if (GameManager.Instance != null && GameManager.Instance.playerHPBar != null)
-            GameManager.Instance.playerHPBar.fillAmount = 1f;
+            GameManager.Instance.playerHPBar.value = 1f;
     }
 
 }
