@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,6 +16,14 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
     public CharacterController playerController;
     public CheckVisiblity visiblity;
     public SkinnedMeshRenderer bodyRenderer;
+    public GameObject eyesObject;
+    public GameObject blackSpawnEffect;
+    public GameObject blackSparks;
+
+    [Header("Audio")]
+    public AudioSource stareAudioSource;
+
+    private bool isBeingLookedAt = false;
 
 
     [Header("Sanity Timers")]
@@ -60,7 +69,7 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
         {
             if (hit.transform == playerTransform)
             {
-                demonTransform.transform.LookAt(playerTransform);
+                
                 Debug.Log("Raycast returned true");
                 return true;
                 
@@ -96,12 +105,79 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
                 player.currentSanity -= amount;
                 GameManager.Instance.sanityBar.fillAmount = (float)player.currentSanity / player.maxSanity;
             }
+            PlayStareSound();
 
         }
         else
         {
             sanityTimer = 1f;
+            PauseStareSound();
         }
+    }
+
+    private bool isFadingOut = false;
+
+    void PlayStareSound()
+    {
+        if (stareAudioSource != null)
+        {
+            if (!stareAudioSource.isPlaying)
+            {
+                
+                stareAudioSource.Play();
+                StartCoroutine(FadeInSound(0f, 1f, 2f)); 
+            }
+            else if (isFadingOut) 
+            {
+                StopCoroutine(FadeOutSound(2f));
+                isFadingOut = false;
+                StartCoroutine(FadeInSound(stareAudioSource.volume, 1f, 2f)); 
+            }
+        }
+    }
+
+    void PauseStareSound()
+    {
+        if (stareAudioSource != null && stareAudioSource.isPlaying)
+        {
+            
+            StartCoroutine(FadeOutSound(2f));
+        }
+    }
+
+    
+    IEnumerator FadeInSound(float startVolume, float targetVolume, float duration)
+    {
+        float timeElapsed = 0f;
+        stareAudioSource.volume = startVolume;
+
+        while (timeElapsed < duration)
+        {
+            stareAudioSource.volume = Mathf.Lerp(startVolume, targetVolume, timeElapsed / duration);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        stareAudioSource.volume = targetVolume; 
+    }
+
+    // Coroutine to gradually fade out the sound
+    IEnumerator FadeOutSound(float duration)
+    {
+        isFadingOut = true;
+        float startVolume = stareAudioSource.volume;
+        float timeElapsed = 0f;
+
+        while (timeElapsed < duration)
+        {
+            stareAudioSource.volume = Mathf.Lerp(startVolume, 0f, timeElapsed / duration);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        stareAudioSource.volume = 0f;
+        stareAudioSource.Stop(); 
+        isFadingOut = false;
     }
 
     public void TeleportDemon()
@@ -120,17 +196,16 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
             if (Random.value < teleportChance)
             {
                 bodyRenderer.enabled = false;
+                eyesObject.SetActive(false);
+                blackSparks.SetActive(true);
+                blackSpawnEffect.SetActive(false);
                 
                 Debug.Log("Successful Chance!");
 
                 if (Vector3.Distance(demonTransform.transform.position, teleportDestination) > 1f)
-                { 
-                    agent.speed = 100f;
-                    agent.acceleration = 100f;
-                    demonTransform.transform.LookAt(playerTransform);
-                    demonTransform.transform.forward = playerTransform.transform.forward;
+                {
                     teleportDestination = PickRoamDestination();
-                    agent.SetDestination(teleportDestination);
+                    agent.Warp(teleportDestination);
                     teleportTimer = teleportDelay;
 
                     Debug.Log("Teleported!");
@@ -141,7 +216,9 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
             else
             {
                 bodyRenderer.enabled = true;
-
+                eyesObject.SetActive(true);
+                blackSparks.SetActive(false);
+                blackSpawnEffect.SetActive(true);
             }
 
 
@@ -186,5 +263,9 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
         // If chance failed or no valid point, stay in current position
         return demonTransform.transform.position;
     }
+
+
+  
+
 
 }
