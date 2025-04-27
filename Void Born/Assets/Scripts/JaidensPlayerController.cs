@@ -62,6 +62,15 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     public Vector3 moveDir;
     private Vector3 playerVel;
 
+    //Sound
+    [Header("Sound")]
+    [SerializeField] private AudioClip walkClip;
+    [SerializeField] private AudioClip sprintClip;
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private AudioClip breathClip;
+    [SerializeField] private AudioClip hurtClip;
+
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -94,6 +103,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
             {
                 HandleJumpOrStand();
                 TryVault();
+                
             }
         }
 
@@ -110,6 +120,11 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
+
+        if (isMoving)
+        {
+            soundManager.instance.playSound(walkClip, transform, 1f);
+        }
     }
 
     private void Sprint()
@@ -132,6 +147,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
                 walkSpeed = sprintHoldTimer >= sprintRampUpTime ? baseWalkSpeed * fullSprintMult : baseWalkSpeed * buildUpMult;
                 isRunning = true;
                 isJogging = false;
+                soundManager.instance.playSound(sprintClip, transform, 1f);
+               
             }
         } else ResetSprintState();
     }
@@ -223,6 +240,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.enabled = true;
         canMove = true;
         isVaulting = false;
+        soundManager.instance.playSound(jumpClip, transform, 1f);
     }
 
     private void ApplyGravity()
@@ -265,6 +283,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         currentHealth -= amount;
         GameManager.Instance.playerHPBar.fillAmount = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
+        soundManager.instance.playSound(hurtClip, transform, 1f);
+       
 
         if (currentHealth <= 0)
         {
