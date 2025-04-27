@@ -7,9 +7,11 @@ public class soundManager : MonoBehaviour
     public enum soundType
     {
         //For the sound added, have it in the same order 
-        Footstep,
+        Walk,
         Sprint,
         Jump,
+        Breath,
+        Hurt
     }
 
     [SerializeField] private soundList[] soundList;

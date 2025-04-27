@@ -130,6 +130,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
                 walkSpeed = sprintHoldTimer >= sprintRampUpTime ? baseWalkSpeed * fullSprintMult : baseWalkSpeed * buildUpMult;
                 isRunning = true;
                 isJogging = false;
+
+                soundManager.playSound(soundManager.soundType.Sprint, 1);
             }
         } else ResetSprintState();
     }
@@ -218,6 +220,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         }
 
         transform.position = end;
+        soundManager.playSound(soundManager.soundType.Jump, 1);
         controller.enabled = true;
         canMove = true;
         isVaulting = false;
@@ -263,6 +266,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         currentHealth -= amount;
         GameManager.Instance.playerHPBar.fillAmount = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
+        soundManager.playSound(soundManager.soundType.Hurt, 1);
 
         if (currentHealth <= 0)
         {
