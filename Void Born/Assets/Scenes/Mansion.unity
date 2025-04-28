@@ -39603,10 +39603,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   oB: {fileID: 1547582711}
   spawnPoints:
-  - {fileID: 1920582449}
-  - {fileID: 901056204}
-  - {fileID: 1120002345}
-  - {fileID: 1772612927}
+  - {fileID: 2072819203}
+  - {fileID: 830428235}
+  - {fileID: 1329018981}
 --- !u!65 &1547582707
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -47807,6 +47806,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1779146800}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1779893231
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1779893232}
+  m_Layer: 0
+  m_Name: Bedroomkeyspawn1 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1779893232
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779893231}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.8495207, y: 0.079321384, z: 10.745117}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1780243650
 GameObject:
   m_ObjectHideFlags: 0
@@ -49583,9 +49613,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   oB: {fileID: 1879100053}
   spawnPoints:
-  - {fileID: 1920582449}
+  - {fileID: 724008150}
   - {fileID: 901056204}
-  - {fileID: 1120002345}
   - {fileID: 1772612927}
 --- !u!65 &1879100049
 BoxCollider:
@@ -56405,6 +56434,7 @@ SceneRoots:
   - {fileID: 585568007}
   - {fileID: 625690283}
   - {fileID: 724008150}
+  - {fileID: 1779893232}
   - {fileID: 830428235}
   - {fileID: 1247894052}
   - {fileID: 1329018981}
