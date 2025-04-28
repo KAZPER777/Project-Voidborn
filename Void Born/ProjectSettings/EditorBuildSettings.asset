@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/basement.unity
     guid: 6730f34bcf999dc4b99565a712f6eea9
   - enabled: 1
