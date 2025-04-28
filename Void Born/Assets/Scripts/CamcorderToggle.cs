@@ -3,20 +3,17 @@ using UnityEngine;
 public class CamcorderToggle : MonoBehaviour
 {
     public GameObject camcorderUI;
-    public GameObject nightVisionOverlay; 
+    private bool camcorderActive = false;
 
-    private bool isActive = false;
-
-    void Update()
+    private void Update()
     {
+        if (!GameManager.Instance.gameStarted) return; 
+
         if (Input.GetKeyDown(KeyCode.C))
         {
-            isActive = !isActive;
-            camcorderUI.SetActive(isActive);
-
-            // Toggle the night vision overlay only if assigned
-            if (nightVisionOverlay != null)
-                nightVisionOverlay.SetActive(isActive);
+            camcorderActive = !camcorderActive;
+            if (camcorderUI != null)
+                camcorderUI.SetActive(camcorderActive);
         }
     }
 }

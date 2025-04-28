@@ -7,7 +7,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     [SerializeField, Range(1f, 5f)] private float walkSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crouchSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
-    [SerializeField] private bool canMove = true;
+    public bool canMove = true;
 
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
@@ -62,6 +62,15 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     public Vector3 moveDir;
     private Vector3 playerVel;
 
+    //Sound
+    [Header("Sound")]
+    [SerializeField] private AudioClip walkClip;
+    [SerializeField] private AudioClip sprintClip;
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private AudioClip breathClip;
+    [SerializeField] private AudioClip hurtClip;
+
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -82,6 +91,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
         if (!isVaulting && canMove)
         {
+            if (!canMove) return;
+
             Movement();
             Sprint();
             HandleCrouch();
@@ -92,6 +103,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
             {
                 HandleJumpOrStand();
                 TryVault();
+                
             }
         }
 
@@ -108,6 +120,11 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
+
+        if (isMoving)
+        {
+            soundManager.instance.playSound(walkClip, transform, 1f);
+        }
     }
 
     private void Sprint()
@@ -130,6 +147,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
                 walkSpeed = sprintHoldTimer >= sprintRampUpTime ? baseWalkSpeed * fullSprintMult : baseWalkSpeed * buildUpMult;
                 isRunning = true;
                 isJogging = false;
+                soundManager.instance.playSound(sprintClip, transform, 1f);
+               
             }
         } else ResetSprintState();
     }
@@ -221,6 +240,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.enabled = true;
         canMove = true;
         isVaulting = false;
+        soundManager.instance.playSound(jumpClip, transform, 1f);
     }
 
     private void ApplyGravity()
@@ -261,22 +281,24 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        GameManager.Instance.playerHPBar.fillAmount = currentHealth / maxHealth;
+        GameManager.Instance.playerHPBar.value = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
+        soundManager.instance.playSound(hurtClip, transform, 1f);
+       
 
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            GameManager.Instance.YouLose.SetActive(true);
+            GameManager.Instance.youLoseScreen.SetActive(true);
             Die();
         }
     }
 
     private IEnumerator DamageFlash()
     {
-        GameManager.Instance.playerdamagescreen.SetActive(true);
+        GameManager.Instance.playerDamageScreen.SetActive(true);
         yield return new WaitForSeconds(0.1f);
-        GameManager.Instance.playerdamagescreen.SetActive(false);
+        GameManager.Instance.playerDamageScreen.SetActive(false);
     }
 
     public void Die()
@@ -302,7 +324,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.enabled = true;
 
         if (GameManager.Instance != null && GameManager.Instance.playerHPBar != null)
-            GameManager.Instance.playerHPBar.fillAmount = 1f;
+            GameManager.Instance.playerHPBar.value = 1f;
     }
 
 }
