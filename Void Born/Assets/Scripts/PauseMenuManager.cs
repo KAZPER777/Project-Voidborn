@@ -1,84 +1,110 @@
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class PauseMenuManager : MonoBehaviour
 {
-    public GameObject pauseMenuUI;
-    public GameObject settingsPanel;
-    public GameObject controlsPanel;
+    public static PauseMenuManager Instance;
 
+    [Header("UI References")]
+    public GameObject pauseMenuPanel; 
+    public GameObject mainPanel;       
     public Button resumeButton;
-    public Button quitButton;
     public Button settingsButton;
+    public Button settingsBackButton;
+    public GameObject settingsPanel;
     public Button controlsButton;
-    public Button backFromSettingsButton;
-    public Button backFromControlsButton;
+    public Button controlsBackButton;
+    public GameObject controlsPanel;
+    public Button quitToDesktopButton;
 
     private bool isPaused = false;
 
-    void Start()
+    private void Awake()
     {
-        pauseMenuUI.SetActive(false);
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        
+        pauseMenuPanel.SetActive(false);
         settingsPanel.SetActive(false);
         controlsPanel.SetActive(false);
 
-        resumeButton.onClick.AddListener(ResumeGame);
-        quitButton.onClick.AddListener(QuitGame);
+       
+        resumeButton.onClick.AddListener(TogglePause);
         settingsButton.onClick.AddListener(OpenSettings);
+        settingsBackButton.onClick.AddListener(CloseSettings);
         controlsButton.onClick.AddListener(OpenControls);
-        backFromSettingsButton.onClick.AddListener(BackToPauseMenu);
-        backFromControlsButton.onClick.AddListener(BackToPauseMenu);
+        controlsBackButton.onClick.AddListener(CloseControls);
+        quitToDesktopButton.onClick.AddListener(OnQuitClicked);
     }
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && !StartScreenManager.Instance.IsStartScreenActive())
+        if (Input.GetKeyDown(KeyCode.Escape))
+            TogglePause();
+    }
+
+    public void TogglePause()
+    {
+        isPaused = !isPaused;
+        pauseMenuPanel.SetActive(isPaused);
+
+        if (isPaused)
         {
-            if (isPaused)
-                ResumeGame();
-            else
-                PauseGame();
+          
+            mainPanel.SetActive(true);
+            settingsPanel.SetActive(false);
+            controlsPanel.SetActive(false);
+
+            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 
-    public void PauseGame()
+    private void OpenSettings()
     {
-        pauseMenuUI.SetActive(true);
-        settingsPanel.SetActive(false);
-        controlsPanel.SetActive(false);
-        Time.timeScale = 0f;
-        isPaused = true;
-    }
-
-    public void ResumeGame()
-    {
-        pauseMenuUI.SetActive(false);
-        settingsPanel.SetActive(false);
-        controlsPanel.SetActive(false);
-        Time.timeScale = 1f;
-        isPaused = false;
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
-
-    public void OpenSettings()
-    {
+        mainPanel.SetActive(false);
         settingsPanel.SetActive(true);
-        controlsPanel.SetActive(false);
     }
 
-    public void OpenControls()
+    private void CloseSettings()
     {
+        settingsPanel.SetActive(false);
+        mainPanel.SetActive(true);
+    }
+
+    private void OpenControls()
+    {
+        mainPanel.SetActive(false);
         controlsPanel.SetActive(true);
-        settingsPanel.SetActive(false);
     }
 
-    public void BackToPauseMenu()
+    private void CloseControls()
     {
-        settingsPanel.SetActive(false);
         controlsPanel.SetActive(false);
+        mainPanel.SetActive(true);
+    }
+
+    private void OnQuitClicked()
+    {
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
+

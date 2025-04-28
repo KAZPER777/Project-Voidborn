@@ -944,7 +944,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01818f04e2bc51e4c8160c2968029281, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  titleText: {fileID: 6848556270956288977}
+  startButton: {fileID: 3170467283582991798}
+  quitButton: {fileID: 8174254088537184590}
+  creditsButton: {fileID: 2779021712240178693}
   creditsPanel: {fileID: 780749019021593266}
+  fadePanel: {fileID: 0}
+  fadeDuration: 1
+  startScreenCanvas: {fileID: 4238397606370359821}
 --- !u!223 &7276609893706468746
 Canvas:
   m_ObjectHideFlags: 0

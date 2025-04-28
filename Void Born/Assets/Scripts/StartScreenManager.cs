@@ -1,24 +1,29 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using TMPro;
 
 public class StartScreenManager : MonoBehaviour
 {
+    
     public static StartScreenManager Instance;
 
-    public Text titleText;
+    [Header("UI References")]
+    public TMP_Text titleText;           
     public Button startButton;
     public Button quitButton;
     public Button creditsButton;
-    public GameObject creditsPanel;
-    public Image fadePanel;
-    public float fadeDuration = 1.0f;
-    public GameObject startScreenCanvas;
+    public Button backButton;            
+    public GameObject creditsPanel;      
+    public GameObject startScreenCanvas; 
 
     private bool showingCredits = false;
 
     private void Awake()
     {
+      
         if (Instance == null)
             Instance = this;
         else
@@ -27,58 +32,56 @@ public class StartScreenManager : MonoBehaviour
 
     private void Start()
     {
-        fadePanel.gameObject.SetActive(false);
+        
+        if (creditsPanel != null)
+            creditsPanel.SetActive(false);
 
-        startButton.onClick.AddListener(StartGame);
-        quitButton.onClick.AddListener(QuitGame);
-        creditsButton.onClick.AddListener(ToggleCredits);
+    
+        startButton.onClick.AddListener(OnStartClicked);
+        quitButton.onClick.AddListener(OnQuitClicked);
+        creditsButton.onClick.AddListener(() => ToggleCredits(true));
+        backButton.onClick.AddListener(() => ToggleCredits(false));
     }
 
-    public void StartGame()
+    private void OnStartClicked()
     {
-        StartCoroutine(FadeOutAndStart());
-    }
-
-    private IEnumerator FadeOutAndStart()
-    {
-        fadePanel.gameObject.SetActive(true);
-        fadePanel.color = new Color(0, 0, 0, 0);
-
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
-        {
-            elapsed += Time.deltaTime;
-            fadePanel.color = new Color(0, 0, 0, elapsed / fadeDuration);
-            yield return null;
-        }
-
+       
         if (startScreenCanvas != null)
-        {
             startScreenCanvas.SetActive(false);
-        }
 
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.StartGame();
-        }
+        GameManager.Instance?.StartGame();
     }
 
-    public void QuitGame()
+    private void OnQuitClicked()
     {
+#if UNITY_EDITOR
+       
+        EditorApplication.isPlaying = false;
+#else
+        // Quit the standalone build
         Application.Quit();
+#endif
     }
 
-    public void ToggleCredits()
+    
+    public void ToggleCredits(bool show = false)
     {
-        showingCredits = !showingCredits;
-        creditsPanel.SetActive(showingCredits);
+        showingCredits = show;
 
+        if (creditsPanel != null)
+        {
+            creditsPanel.SetActive(showingCredits);
+            
+            creditsPanel.transform.SetAsLastSibling();
+        }
+
+      
         startButton.gameObject.SetActive(!showingCredits);
         quitButton.gameObject.SetActive(!showingCredits);
         creditsButton.gameObject.SetActive(!showingCredits);
     }
 
-   
+  
     public bool IsStartScreenActive()
     {
         return startScreenCanvas != null && startScreenCanvas.activeSelf;
