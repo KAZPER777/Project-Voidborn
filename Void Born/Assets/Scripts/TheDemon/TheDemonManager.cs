@@ -182,7 +182,7 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
 
     public void TeleportDemon()
     {
-        
+
         teleportTimer -= Time.deltaTime;
 
         if (bodyRenderer.enabled == false)
@@ -199,18 +199,29 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
                 eyesObject.SetActive(false);
                 blackSparks.SetActive(true);
                 blackSpawnEffect.SetActive(false);
-                
+
                 Debug.Log("Successful Chance!");
 
                 if (Vector3.Distance(demonTransform.transform.position, teleportDestination) > 1f)
                 {
-                    teleportDestination = PickRoamDestination();
+                    // ** Decide the radius based on visibility **
+                    float actualRadius = teleportSphereRadius;
+                    if (!CheckVisibility())
+                    {
+                        actualRadius = teleportSphereRadius * 2.5f; // Double the radius if player can't see demon
+                        Debug.Log("Player not looking. Using bigger teleport radius.");
+                    }
+                    else
+                    {
+                        Debug.Log("Player looking. Using normal teleport radius.");
+                    }
+
+                    teleportDestination = PickRoamDestination(actualRadius);
                     agent.Warp(teleportDestination);
                     teleportTimer = teleportDelay;
 
                     Debug.Log("Teleported!");
                 }
-                
 
             }
             else
@@ -220,10 +231,8 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
                 blackSparks.SetActive(false);
                 blackSpawnEffect.SetActive(true);
             }
-
-
         }
-       
+
 
     }
 
@@ -246,26 +255,25 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
         }
     }
 
-    Vector3 PickRoamDestination() //pick teleport destination
-    { 
+    Vector3 PickRoamDestination(float radius) //pick teleport destination
+    {
 
-            Vector3 randomOffset = Random.insideUnitSphere * teleportSphereRadius;
-            Vector3 target = playerTransform.position + randomOffset;
+        Vector3 randomOffset = Random.insideUnitSphere * radius;
+        Vector3 target = playerTransform.position + randomOffset;
 
-            // Check if it's a valid NavMesh position
-            NavMeshHit navHit;
-            if (NavMesh.SamplePosition(target, out navHit, teleportSphereRadius, NavMesh.AllAreas))
-            {
-                return navHit.position;
-            }
-        
+        NavMeshHit navHit;
+        if (NavMesh.SamplePosition(target, out navHit, radius, NavMesh.AllAreas))
+        {
+            return navHit.position;
+        }
 
-        // If chance failed or no valid point, stay in current position
         return demonTransform.transform.position;
     }
 
 
-  
+   
+
+
 
 
 }
