@@ -5,6 +5,10 @@ public class TheDemonAI : MonoBehaviour
 {
 
     private float rotationSpeed = 10;
+
+    private bool isAttackingPlayer = false;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -18,7 +22,7 @@ public class TheDemonAI : MonoBehaviour
             return;
 
         TheDemonManager.instance.LookingAtDemon(10);
-        TheDemonManager.instance.DrawRay(); // Optional
+        //TheDemonManager.instance.DrawRay(); // Optional
         TheDemonManager.instance.OnSanityZero();
         TheDemonManager.instance.TeleportDemon();
 

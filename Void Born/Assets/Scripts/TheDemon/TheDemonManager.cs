@@ -20,9 +20,15 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
     public GameObject blackSpawnEffect;
     public GameObject blackSparks;
 
+    [Header("Attack Settings")]
+    public float attackSpeed = 100f;
+    public float attackRange = 4f; 
+    public int attackDamage = 100; 
+    private bool isChasingPlayer = false;
+
     [Header("Audio")]
     public AudioSource stareAudioSource;
-
+    public AudioSource jumpscareAudioSource;
     private bool isBeingLookedAt = false;
 
 
@@ -239,23 +245,47 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
 
     public void OnSanityZero() //work in progress
     {
-        if (player.currentSanity <= 0) //if sanity is zero then attack the player
+        if (player.currentSanity <= 0 && !isChasingPlayer)
         {
             player.currentSanity = 0;
             animate.SetBool(IS_FROZEN, false);
             animate.SetBool(IS_ATTACKING, true);
+            isChasingPlayer = true;
+            agent.acceleration = 100f;
+            agent.speed = attackSpeed; 
+            agent.stoppingDistance = attackRange;
 
-            attackTimer -= Time.deltaTime; //decrement timer 
-            if (attackTimer <= 0)
+            if (jumpscareAudioSource != null && !jumpscareAudioSource.isPlaying)
             {
-                attackTimer = 2f; //reset attack timer
-
+                jumpscareAudioSource.Play();
             }
+        }
+
+        if (isChasingPlayer)
+        {
+            agent.SetDestination(playerTransform.transform.position);
+
+            
+            if (Vector3.Distance(demonTransform.transform.position, playerTransform.transform.position) <= attackRange)
+            {
+                AttackPlayer();
+            }
+
 
         }
     }
 
-    Vector3 PickRoamDestination(float radius) //pick teleport destination
+    private void AttackPlayer()
+    {
+        if (!isAttacking) 
+        {
+            isAttacking = true;
+            player.TakeDamage(attackDamage); 
+            Debug.Log("Player has been attacked by the Demon!");
+        }
+    }
+
+    Vector3 PickRoamDestination(float radius) 
     {
 
         Vector3 randomOffset = Random.insideUnitSphere * radius;
