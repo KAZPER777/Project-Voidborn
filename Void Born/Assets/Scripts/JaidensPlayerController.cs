@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class JaidensPlayerController : MonoBehaviour, IDamageable
@@ -8,6 +9,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     [SerializeField, Range(0.1f, .9f)] private float crouchSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
     public bool canMove = true;
+    private bool canMoveToo = true;
+    private float canMoveTimer = 0.5f; 
 
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
@@ -44,6 +47,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     [SerializeField] private Animator visualAnimator;
     public MeshRenderer meshrender;
     public Animator cameraAnimator;
+    public AudioSource audios;
 
     // Movement state
     private enum MovementState { Standing, Crouching, Crawling }
@@ -74,6 +78,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     private void Start()
     {
         controller = GetComponent<CharacterController>();
+        audios = GetComponent<AudioSource>();
         meshrender.enabled = false;
         Application.runInBackground = true;
 
@@ -113,6 +118,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
     private void Movement()
     {
+     
         if (!canMove) return;
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right +
@@ -121,9 +127,24 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.Move(moveDir * walkSpeed * Time.deltaTime);
         isMoving = moveDir != Vector3.zero;
 
+
         if (isMoving)
         {
-            soundManager.instance.playSound(walkClip, transform, 1f);
+            if (canMoveToo)
+            {
+                soundManager.instance.playSound(walkClip, transform, 1f);
+                canMoveToo = false;
+                canMoveTimer = 1.5f; 
+            }
+        }
+
+        if (!canMoveToo)
+        {
+            canMoveTimer -= Time.deltaTime;
+            if (canMoveTimer <= 0)
+            {
+                canMoveToo = true;
+            }
         }
     }
 
@@ -283,6 +304,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         currentHealth -= amount;
         GameManager.Instance.playerHPBar.value = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
+
         soundManager.instance.playSound(hurtClip, transform, 1f);
        
 
