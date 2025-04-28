@@ -10,7 +10,9 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
     public bool canMove = true;
     private bool canMoveToo = true;
-    private float canMoveTimer = 0.5f; 
+    private float canMoveTimer = 0.5f;
+    private float sprintSoundTimer = 1f; 
+    private float sprintSoundCooldown = 1f; 
 
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
@@ -168,10 +170,19 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
                 walkSpeed = sprintHoldTimer >= sprintRampUpTime ? baseWalkSpeed * fullSprintMult : baseWalkSpeed * buildUpMult;
                 isRunning = true;
                 isJogging = false;
-                soundManager.instance.playSound(sprintClip, transform, 1f);
-               
+                sprintSoundTimer -= Time.deltaTime;
+                if (sprintSoundTimer <= 0f)
+                {
+                    soundManager.instance.playSound(sprintClip, transform, 1f);
+                    sprintSoundTimer = sprintSoundCooldown; // Reset timer
+                }
             }
-        } else ResetSprintState();
+        }
+        else
+        {
+            ResetSprintState();
+            sprintSoundTimer = 1f; 
+        }
     }
 
     private void ResetSprintState()
