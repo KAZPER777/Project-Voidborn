@@ -7,6 +7,15 @@ public class PlayerTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        playerTrig.WinGame();
+        
+        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("level exit"))
+        {
+            playerTrig.WinGame();
+        }
     }
 }
