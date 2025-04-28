@@ -27727,7 +27727,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8925215833769535121, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -57411,6 +57411,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1634081041}
     - target: {fileID: 602601731178111827, guid: 9c9c2ba58177cfb42abca8192ae71d7f, type: 3}
+      propertyPath: sceneToLoad
+      value: Forest
+      objectReference: {fileID: 0}
+    - target: {fileID: 602601731178111827, guid: 9c9c2ba58177cfb42abca8192ae71d7f, type: 3}
       propertyPath: doorCollider
       value: 
       objectReference: {fileID: 0}
@@ -57494,6 +57498,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 31baff5dbadcb0e4d952a60b0036178b, type: 2}
+    - target: {fileID: 5830050760140595453, guid: 9c9c2ba58177cfb42abca8192ae71d7f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
       propertyPath: KeyINV
       value: 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement; // ← Add this at the top!
 
 public class DoorsWithLock : MonoBehaviour
 {
@@ -13,11 +14,12 @@ public class DoorsWithLock : MonoBehaviour
 
     [Header("Final Door Settings")]
     public bool isFinalDoor = false;
+    public string sceneToLoad; // <- add this to specify the scene to load
 
     private bool inReach = false;
     private bool unlocked = false;
     private bool hasKey = false;
-    private bool hasTriggeredWin = false;
+    private bool hasTriggeredTransition = false; // <- renamed to match new behavior
 
     void Start()
     {
@@ -30,7 +32,7 @@ public class DoorsWithLock : MonoBehaviour
 
     void Update()
     {
-        if (hasTriggeredWin) return;
+        if (hasTriggeredTransition) return;
 
         bool interactPressed = Input.GetButtonDown("Interact");
         hasKey = KeyINV != null && KeyINV.activeInHierarchy;
@@ -76,12 +78,12 @@ public class DoorsWithLock : MonoBehaviour
             openText.SetActive(false);
             Debug.Log("[DoorsWithLock] Player exited reach zone. inReach = false.");
 
-            if (isFinalDoor && unlocked && !hasTriggeredWin)
+            if (isFinalDoor && unlocked && !hasTriggeredTransition)
             {
-                hasTriggeredWin = true;
-                Debug.Log("[DoorsWithLock] Final door exited. Triggering win...");
+                hasTriggeredTransition = true;
+                Debug.Log("[DoorsWithLock] Final door exited. Loading scene...");
                 CloseDoor();
-                GameManager.Instance?.WinGame();
+                LoadNextScene();
             }
         }
     }
@@ -115,6 +117,17 @@ public class DoorsWithLock : MonoBehaviour
             bool isOpen = door.GetBool("Open");
             if (isOpen) CloseDoor();
             else OpenDoor();
+        }
+    }
+
+    private void LoadNextScene()
+    {
+        if (!string.IsNullOrEmpty(sceneToLoad))
+        {
+            SceneManager.LoadScene(sceneToLoad);
+        } else
+        {
+            Debug.LogError("[DoorsWithLock] No scene name specified to load!");
         }
     }
 }
