@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional if you switch scenes
+            //DontDestroyOnLoad(gameObject); // Optional if you switch scenes
         } else
         {
             Destroy(gameObject);
