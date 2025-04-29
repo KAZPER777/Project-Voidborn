@@ -10,6 +10,7 @@ TagManager:
   - Trees
   - Forest Section
   - Destroy
+  - Spawn
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Vaultable
   - Water
   - UI
-  - 
+  - player
   - 
   - 
   - 

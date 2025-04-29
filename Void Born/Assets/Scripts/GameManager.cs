@@ -25,9 +25,11 @@ public class GameManager : MonoBehaviour
     [Header("UI Elements")]
     public GameObject winMenuUI;
     public GameObject checkpointPopup;
+
     public GameObject playerDamageScreen;
     public GameObject youLoseScreen;
     public Slider playerHPBar;
+	public Image sanityBar;
 
     [Header("Pause Menu")]
     public GameObject pauseMenuUI;
@@ -46,7 +48,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional if you switch scenes
+            //DontDestroyOnLoad(gameObject); // Optional if you switch scenes
         } else
         {
             Destroy(gameObject);
