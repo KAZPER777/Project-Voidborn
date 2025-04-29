@@ -138,7 +138,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         {
             if (canMoveToo)
             {
-                soundManager.instance.playSound(walkClip, transform, 1f);
+               // soundManager.instance.playSound(walkClip, transform, 1f);
                 canMoveToo = false;
                 canMoveTimer = 1.5f; 
             }
