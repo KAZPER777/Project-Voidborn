@@ -386,6 +386,8 @@ MonoBehaviour:
   crouchSpeed: 0.1
   crawlSpeed: 0.1
   canMove: 1
+  maxSanity: 0
+  currentSanity: 0
   sprintRampUpTime: 1
   buildUpMult: 1.25
   fullSprintMult: 1.5
@@ -433,11 +435,17 @@ MonoBehaviour:
   visualAnimator: {fileID: 2352140455643587363}
   meshrender: {fileID: 4002149654984605234}
   cameraAnimator: {fileID: 2352140455643587363}
+  audios: {fileID: 0}
   isCrouching: 0
   isCrawling: 0
   isMoving: 0
   isRunning: 0
   moveDir: {x: 0, y: 0, z: 0}
+  walkClip: {fileID: 8300000, guid: 52b6376277a81164b8fe8a15fb6a64bd, type: 3}
+  sprintClip: {fileID: 8300000, guid: 322b03685dc609043a9e5a8799cd365d, type: 3}
+  jumpClip: {fileID: 8300000, guid: f77b64eebe07b3141bfe044e759856eb, type: 3}
+  breathClip: {fileID: 8300000, guid: 7174d2b10436a274ea773f6d2d81831e, type: 3}
+  hurtClip: {fileID: 8300000, guid: cff7c5f35d08d254cb00acdb15be320b, type: 3}
 --- !u!143 &6492433773903625295
 CharacterController:
   m_ObjectHideFlags: 0

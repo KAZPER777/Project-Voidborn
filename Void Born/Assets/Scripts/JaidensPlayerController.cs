@@ -5,7 +5,7 @@ using UnityEngine;
 public class JaidensPlayerController : MonoBehaviour, IDamageable
 {
     [Header("Movement Settings")]
-    [SerializeField, Range(1f, 5f)] private float walkSpeed;
+    [SerializeField, Range(1f, 10f)] private float walkSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crouchSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
     public bool canMove = true;
