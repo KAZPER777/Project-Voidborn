@@ -14,10 +14,14 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     private float sprintSoundTimer = 1f; 
     private float sprintSoundCooldown = 1f; 
 
+    [Header("Sanity")]
+    public int maxSanity;
+    public int currentSanity;
+
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
     [SerializeField] private float buildUpMult = 1.25f;
-    [SerializeField] private float fullSprintMult = 1.5f;
+    [SerializeField] private float fullSprintMult = 20f;
 
     [Header("Gravity Settings")]
     [SerializeField] private float gravity = 9.81f;
