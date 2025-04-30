@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class playerSpawn : MonoBehaviour
+public class PlayerSpawn : MonoBehaviour
 {
 
     public GameObject player;

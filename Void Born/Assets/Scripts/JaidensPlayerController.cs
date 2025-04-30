@@ -5,7 +5,7 @@ using UnityEngine;
 public class JaidensPlayerController : MonoBehaviour, IDamageable
 {
     [Header("Movement Settings")]
-    [SerializeField, Range(1f, 5f)] private float walkSpeed;
+    [SerializeField, Range(1f, 10f)] private float walkSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crouchSpeed;
     [SerializeField, Range(0.1f, .9f)] private float crawlSpeed;
     public bool canMove = true;
@@ -138,7 +138,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         {
             if (canMoveToo)
             {
-                soundManager.instance.playSound(walkClip, transform, 1f);
+               // soundManager.instance.playSound(walkClip, transform, 1f);
                 canMoveToo = false;
                 canMoveTimer = 1.5f; 
             }
@@ -317,10 +317,10 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        GameManager.Instance.playerHPBar.value = currentHealth / maxHealth;
+        //GameManager.Instance.playerHPBar.value = currentHealth / maxHealth;
         StartCoroutine(DamageFlash());
 
-        soundManager.instance.playSound(hurtClip, transform, 1f);
+       // soundManager.instance.playSound(hurtClip, transform, 1f);
        
 
         if (currentHealth <= 0)
@@ -343,6 +343,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         Debug.Log("Player has died.");
         canMove = false;
         controller.enabled = false;
+        
     }
 
     public void SpawnPlayer()

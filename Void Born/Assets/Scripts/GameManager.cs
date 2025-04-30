@@ -48,10 +48,18 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional if you switch scenes
+            //DontDestroyOnLoad(gameObject); // Optional if you switch scenes
         } else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseGame();
         }
     }
 
@@ -82,14 +90,18 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
-        Debug.Log("⏸ Game Paused");
+        pauseMenuUI.SetActive(true);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         CurrentState = GameState.Paused;
         Time.timeScale = 0f;
     }
 
     public void ResumeGame()
     {
-        Debug.Log("▶️ Game Resumed");
+        pauseMenuUI.SetActive(false);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         CurrentState = GameState.Playing;
         Time.timeScale = 1f;
     }

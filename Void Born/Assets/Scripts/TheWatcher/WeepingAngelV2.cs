@@ -2,7 +2,6 @@ using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unity.Hierarchy;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -45,7 +44,7 @@ public class WeepingAngelV2 : MonoBehaviour
 
        if(agent != null)
        {
-            if(IsVisible()) //keeps checking if isVisible is true
+            if(IsVisible()) //keeps checking if isVisible is trueS
             {
                 //stop moving
                 agent.isStopped = true;

@@ -558,6 +558,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6725634470436978315, guid: e11bbf86a0506484ba8af38056bb250f, type: 3}
+      propertyPath: pauseMenuUI
+      value: 
+      objectReference: {fileID: 31989498}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
