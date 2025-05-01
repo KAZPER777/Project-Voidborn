@@ -5,6 +5,7 @@ public class JaidensCameraController : MonoBehaviour
 {
     public JaidensPlayerController player;
     [SerializeField] CharacterController controller;
+    [SerializeField] private Transform playerYawTransform;
 
     // Animator
     public Animator cameraAnimation;
@@ -47,14 +48,17 @@ public class JaidensCameraController : MonoBehaviour
 
     private void CameraMovement()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSens * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * mouseSens;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSens;
+
+        if (Mathf.Abs(mouseX) > 100 || Mathf.Abs(mouseY) > 100)
+            Debug.Log($"Mouse input spike - X: {mouseX}, Y: {mouseY}");
 
         rotX += invertY ? mouseY : -mouseY;
         rotX = Mathf.Clamp(rotX, -90, 90);
 
         transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
-        transform.parent.parent.Rotate(Vector3.up * mouseX);
+        playerYawTransform.Rotate(Vector3.up * mouseX);
     }
 
     private void HandleCameraHeight()
