@@ -48,6 +48,8 @@ public class JaidensCameraController : MonoBehaviour
 
     private void CameraMovement()
     {
+        if (Time.timeScale == 0) return; 
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSens;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSens;
 
