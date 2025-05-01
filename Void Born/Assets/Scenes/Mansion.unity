@@ -23116,9 +23116,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 2359b5549c0cab84fb166c2b22cdb365, type: 3}
       insertIndex: -1
       addedObject: {fileID: 832389147}
-    - targetCorrespondingSourceObject: {fileID: 100000, guid: 2359b5549c0cab84fb166c2b22cdb365, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 832389148}
   m_SourcePrefab: {fileID: 100100000, guid: 2359b5549c0cab84fb166c2b22cdb365, type: 3}
 --- !u!4 &832389145 stripped
 Transform:
@@ -23149,29 +23146,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &832389148
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 832389146}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 31.750803, y: 25.009468, z: 9.868522}
+  m_Center: {x: 3.5859993, y: 12.004689, z: -0.026697265}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -27820,9 +27796,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3327279225337649903, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
+      propertyPath: mouseSens
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3327279225337649903, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: standingY
       value: 0.67
       objectReference: {fileID: 0}
+    - target: {fileID: 3327279225337649903, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
+      propertyPath: playerYawTransform
+      value: 
+      objectReference: {fileID: 1061248428}
     - target: {fileID: 5825221148752148929, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: m_Name
       value: Player
@@ -27923,7 +27907,7 @@ MonoBehaviour:
   invOB: {fileID: 2019067253}
   pickUpText: {fileID: 1218716546}
   keySound: {fileID: 1141732013}
-  inReach: 0
+  interactDistance: 3
 --- !u!4 &1063492207 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3842169575990769385, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
@@ -40732,7 +40716,7 @@ MonoBehaviour:
   invOB: {fileID: 492789109}
   pickUpText: {fileID: 1218716546}
   keySound: {fileID: 1141732013}
-  inReach: 0
+  interactDistance: 2
 --- !u!23 &1547582709
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -51050,7 +51034,7 @@ MonoBehaviour:
   invOB: {fileID: 1809693810}
   pickUpText: {fileID: 1218716546}
   keySound: {fileID: 1141732013}
-  inReach: 0
+  interactDistance: 2
 --- !u!23 &1879100051
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -52409,7 +52393,7 @@ MonoBehaviour:
   invOB: {fileID: 2019067253}
   pickUpText: {fileID: 1218716546}
   keySound: {fileID: 1141732013}
-  inReach: 0
+  interactDistance: 2
 --- !u!23 &1925819495
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -53984,11 +53968,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.986624
+      value: -7.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.6299284
+      value: -2.73
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -53996,19 +53980,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.00000041664606
+      value: -0.00000041255865
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.38268274
+      value: 0.42269754
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9238798
+      value: 0.90627086
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000084408036
+      value: -0.00000010253795
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -54020,7 +54004,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 45
+      value: 50.01
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b37603f8ea8ba83489df2180bfd8eef2, type: 3}
       propertyPath: m_Name
@@ -54063,8 +54047,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.00919602, y: 0.017352508, z: 0.0065055997}
-  m_Center: {x: -0.00007506246, y: 0.008913322, z: -0.0017726601}
+  m_Size: {x: 0.012156357, y: 0.017352507, z: 0.006505599}
+  m_Center: {x: -0.0015551108, y: 0.008913325, z: -0.00177266}
 --- !u!1 &2019067253
 GameObject:
   m_ObjectHideFlags: 0
@@ -56782,7 +56766,7 @@ MonoBehaviour:
   invOB: {fileID: 1809693810}
   pickUpText: {fileID: 1218716546}
   keySound: {fileID: 1879100047}
-  inReach: 0
+  interactDistance: 2
 --- !u!114 &2127208869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56799,7 +56783,7 @@ MonoBehaviour:
   invOB: {fileID: 492789109}
   pickUpText: {fileID: 1218716546}
   keySound: {fileID: 1547582705}
-  inReach: 0
+  interactDistance: 2
 --- !u!114 &2127208870
 MonoBehaviour:
   m_ObjectHideFlags: 0
