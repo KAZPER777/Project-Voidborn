@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class JaidensPlayerController : MonoBehaviour, IDamageable
 {
@@ -340,7 +341,11 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
     public void Die()
     {
+        
         Debug.Log("Player has died.");
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Time.timeScale = 0f;
         canMove = false;
         controller.enabled = false;
         

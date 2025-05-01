@@ -114,6 +114,8 @@ public class GameManager : MonoBehaviour
         if (youLoseScreen != null)
         {
             youLoseScreen.SetActive(true);
+            
+
         }
     }
 

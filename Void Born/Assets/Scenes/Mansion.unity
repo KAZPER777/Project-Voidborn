@@ -11544,6 +11544,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 358017075}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &360249079 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8394744259492458501, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
+  m_PrefabInstance: {fileID: 714442054}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &360249083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360249079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 982c54976abe7174494b1639ae81c22f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isVisible: 0
 --- !u!1 &365786291
 GameObject:
   m_ObjectHideFlags: 0
@@ -20510,9 +20528,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 634577385582714598, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
+      propertyPath: damageDelay
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 634577385582714598, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 1061248428}
+    - target: {fileID: 634577385582714598, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
+      propertyPath: visibilityCheck
+      value: 
+      objectReference: {fileID: 360249083}
     - target: {fileID: 4779323891988055200, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
       propertyPath: m_Speed
       value: 1
@@ -20561,10 +20587,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Watcher_A Variant
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2764480808295699196, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8394744259492458501, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 360249083}
   m_SourcePrefab: {fileID: 100100000, guid: 471376966f2582b48bc0e797c053afd7, type: 3}
 --- !u!1 &723192886
 GameObject:
@@ -57353,18 +57383,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2096190180}
     m_Modifications:
-    - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
-      propertyPath: KeyINV
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
-      propertyPath: doorSound
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
-      propertyPath: lockedSound
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 602601731178111827, guid: 9c9c2ba58177cfb42abca8192ae71d7f, type: 3}
       propertyPath: KeyINV
       value: 
@@ -57472,6 +57490,18 @@ PrefabInstance:
     - target: {fileID: 5830050760140595453, guid: 9c9c2ba58177cfb42abca8192ae71d7f, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
+      propertyPath: KeyINV
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
+      propertyPath: doorSound
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166885795021751559, guid: f12ce7b66fd07db4c88d63804d02dc71, type: 3}
+      propertyPath: lockedSound
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

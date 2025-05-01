@@ -44,7 +44,7 @@ public class WeepingAngelV2 : MonoBehaviour
 
        if(agent != null)
        {
-            if(IsVisible()) //keeps checking if isVisible is trueS
+            if(IsVisible()) //keeps checking if isVisible is true
             {
                 //stop moving
                 agent.isStopped = true;
