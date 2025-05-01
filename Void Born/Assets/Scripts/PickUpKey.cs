@@ -1,16 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class PickUpKey : MonoBehaviour
 {
-    public GameObject keyOB;          // The key object in the scene
-    public GameObject invOB;          // The key's icon in the inventory
-    public GameObject pickUpText;     // UI text shown when looking at the key
-    public AudioSource keySound;      // Sound that plays when key is picked up
+    public GameObject keyOB;         
+    public GameObject invOB;         
+    public GameObject pickUpText;     
+    public AudioSource keySound;      
 
-    public float interactDistance = 3f; // How far the player can interact from
+    public float interactDistance = 2.1f; 
 
     private bool keyPickedUp = false;
 
