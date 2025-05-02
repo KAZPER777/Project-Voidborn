@@ -929,6 +929,10 @@ PrefabInstance:
       propertyPath: standingY
       value: 0.92
       objectReference: {fileID: 0}
+    - target: {fileID: 3327279225337649903, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
+      propertyPath: playerYawTransform
+      value: 
+      objectReference: {fileID: 1873985831}
     - target: {fileID: 5825221148752148929, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: m_Name
       value: Player
