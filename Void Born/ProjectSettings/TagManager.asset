@@ -11,6 +11,7 @@ TagManager:
   - Forest Section
   - Destroy
   - Spawn
+  - Closet
   layers:
   - Default
   - TransparentFX

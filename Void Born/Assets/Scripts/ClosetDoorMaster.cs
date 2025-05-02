@@ -3,9 +3,6 @@ using System.Collections;
 
 public class ClosetDoorMaster : MonoBehaviour
 {
-    private StalkerAI stalker;
-
-
     [Header("Door")]
     public Transform openPosition;
     public Transform closedPosition;
@@ -27,7 +24,10 @@ public class ClosetDoorMaster : MonoBehaviour
 
     [Header("Interaction Check")]
     public Transform triggerPoint;
-    public float triggerDistance = 2.5f;
+    public float triggerDistance = 5f;
+
+    [Header("Enemy AI")]
+    [SerializeField] private StalkerAI stalker;
 
     private enum DoorState { Closed, Opening, OpenWaiting, Closing }
     private DoorState doorState = DoorState.Closed;
@@ -57,9 +57,9 @@ public class ClosetDoorMaster : MonoBehaviour
 
         bool isLookingAtCloset = false;
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, 3f))
+        if (Physics.Raycast(ray, out RaycastHit hit, 5f))
         {
-            if (hit.transform == transform || hit.transform.IsChildOf(transform))
+            if (hit.transform.CompareTag("Closet") || hit.transform.IsChildOf(transform))
                 isLookingAtCloset = true;
         }
 
@@ -111,7 +111,6 @@ public class ClosetDoorMaster : MonoBehaviour
                 isEntering = false;
                 isPlayerInside = true;
                 EnablePlayerMovement(true);
-                stalker.CantSeePlayer();
             }
         }
 
