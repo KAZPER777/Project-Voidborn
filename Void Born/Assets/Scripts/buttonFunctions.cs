@@ -17,13 +17,26 @@ public class buttonFunctions : MonoBehaviour
 
     private IEnumerator RestartScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        yield return null; // Wait for the next frame
+        if(GameManager.Instance.wonGame == true)
+        {
+            if (SceneManager.GetActiveScene().name == "Forest")
+            {
 
-        // Wait until the player script is assigned again
-        yield return new WaitUntil(() => GameManager.Instance.playerScript != null);
+                SceneManager.LoadScene("Mansion");
+            }
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            yield return null; // Wait for the next frame
 
-        GameManager.Instance.playerScript.SpawnPlayer();
+            // Wait until the player script is assigned again
+            yield return new WaitUntil(() => GameManager.Instance.playerScript != null);
+
+            GameManager.Instance.playerScript.SpawnPlayer();
+        }
+
+
     }
 
     public void quit()

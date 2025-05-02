@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     private bool isPaused = false;
     public bool gameStarted = false;
+    public bool wonGame = false;
 
     [Header("Checkpoint System")]
     [SerializeField] private Transform currentCheckpoint;
@@ -139,9 +140,11 @@ public class GameManager : MonoBehaviour
         if (winMenuUI != null)
         {
             winMenuUI.SetActive(true);
+            wonGame = true;
         } else
         {
             Debug.LogWarning("[GameManager] winMenuUI not assigned!");
+            wonGame = false;
         }
 
         Time.timeScale = 0f;
