@@ -559,7 +559,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6725634470436978315, guid: e11bbf86a0506484ba8af38056bb250f, type: 3}
+      propertyPath: fadePanel
+      value: 
+      objectReference: {fileID: 1822423343}
+    - target: {fileID: 6725634470436978315, guid: e11bbf86a0506484ba8af38056bb250f, type: 3}
       propertyPath: pauseMenuUI
+      value: 
+      objectReference: {fileID: 31989498}
+    - target: {fileID: 6725634470436978315, guid: e11bbf86a0506484ba8af38056bb250f, type: 3}
+      propertyPath: startScreenCanvas
       value: 
       objectReference: {fileID: 31989498}
     m_RemovedComponents: []
@@ -649,6 +657,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1822423343 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6327805278522499061, guid: 007b740ac23f7de4d81012572f436b85, type: 3}
+  m_PrefabInstance: {fileID: 2112927129}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2112927129
 PrefabInstance:
   m_ObjectHideFlags: 0

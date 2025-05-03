@@ -41,7 +41,11 @@ public class StartScreenManager : MonoBehaviour
 
     private void OnStartButtonPressed()
     {
-        StartCoroutine(FadeOutAndStart());
+        // Disable interaction to avoid double-press
+        startButton.interactable = false;
+
+        // Delegate transition to GameManager
+        GameManager.Instance.BeginStartSequence();
     }
 
     private IEnumerator FadeOutAndStart()
