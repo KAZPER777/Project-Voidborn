@@ -3,6 +3,8 @@ using System.Collections;
 
 public class ClosetDoorMaster : MonoBehaviour
 {
+   public static ClosetDoorMaster instance;
+
     [Header("Door")]
     public Transform openPosition;
     public Transform closedPosition;
@@ -28,6 +30,7 @@ public class ClosetDoorMaster : MonoBehaviour
 
     [Header("Enemy AI")]
     [SerializeField] private StalkerAI stalker;
+    public bool canWatcherMove = true;
 
     private enum DoorState { Closed, Opening, OpenWaiting, Closing }
     private DoorState doorState = DoorState.Closed;
@@ -111,6 +114,8 @@ public class ClosetDoorMaster : MonoBehaviour
                 isEntering = false;
                 isPlayerInside = true;
                 EnablePlayerMovement(true);
+                //check watcher stuff
+                canWatcherMove = false;
             }
         }
 
