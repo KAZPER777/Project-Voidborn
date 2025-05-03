@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,6 +30,11 @@ public class GameManager : MonoBehaviour
 
     [Header("Gate")]
     public GameObject endingGate;
+    
+    [Header("Flashlight Prompt")]
+    public TextMeshProUGUI flashlightPromptText;
+    public float flashlightPromptDuration = 5f; // Seconds to fade out
+
 
     [Header("UI Elements")]
     public GameObject winMenuUI;
@@ -49,6 +55,7 @@ public class GameManager : MonoBehaviour
     private bool isPaused = false;
     public bool gameStarted = false;
     public bool wonGame = false;
+    private bool flashlightFaded = false;
 
     [Header("Checkpoint System")]
     [SerializeField] private Transform currentCheckpoint;
@@ -71,6 +78,14 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             PauseGame();
+        }
+
+        if (flashlightPromptText != null && !flashlightFaded)
+        {
+            Debug.Log("Not null flaslight");
+            flashlightPromptText.gameObject.SetActive(true);
+            flashlightPromptText.alpha = 1f;
+            StartCoroutine(FadeOutFlashlightPrompt());
         }
     }
 
@@ -102,7 +117,9 @@ public class GameManager : MonoBehaviour
             youLoseScreen.SetActive(false);
         }
 
-        
+      
+
+
     }
 
 
@@ -234,4 +251,25 @@ public class GameManager : MonoBehaviour
             if (col != null) col.enabled = false;
         }
     }
+    private IEnumerator FadeOutFlashlightPrompt()
+    {
+        yield return new WaitForSeconds(2f); // Wait before starting fade
+
+        float elapsed = 0f;
+        float duration = flashlightPromptDuration;
+        Color originalColor = flashlightPromptText.color;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
+            flashlightPromptText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            yield return null;
+        }
+
+        flashlightFaded = true;
+        flashlightPromptText.gameObject.SetActive(false);
+       
+    }
+
 }
