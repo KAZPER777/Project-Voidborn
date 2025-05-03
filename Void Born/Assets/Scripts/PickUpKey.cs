@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PickUpKey : MonoBehaviour
 {
+    public static PickUpKey instance;
+
+
     public GameObject keyOB;         
     public GameObject invOB;         
     public GameObject pickUpText;     
@@ -35,12 +38,12 @@ public class PickUpKey : MonoBehaviour
 
                 if (Input.GetButtonDown("Interact"))
                 {
+                    
                     keyOB.SetActive(false);
                     keySound.Play();
                     invOB.SetActive(true);
                     pickUpText.SetActive(false);
                     keyPickedUp = true;
-
                     Debug.Log("[PickUpKey] Key picked up!");
                 }
             }

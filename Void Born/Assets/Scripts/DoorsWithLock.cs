@@ -38,6 +38,7 @@ public class DoorsWithLock : MonoBehaviour
         hasKey = KeyINV != null && KeyINV.activeInHierarchy;
 
         if (hasKey && !unlocked)
+            GameManager.Instance.SetObjective("Leave Through The Front Door");
             Debug.Log("[DoorsWithLock] Player has the key.");
 
         Debug.Log("[DoorsWithLock] Debug State → inReach: " + inReach + " | hasKey: " + hasKey + " | unlocked: " + unlocked + " | InteractPressed: " + interactPressed);

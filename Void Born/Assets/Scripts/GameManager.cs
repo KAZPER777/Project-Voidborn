@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Elements")]
     public GameObject winMenuUI;
     public GameObject checkpointPopup;
-
+    public GameObject keyObjective; //for key objective
     public GameObject playerDamageScreen;
     public GameObject youLoseScreen;
     public Slider playerHPBar;
@@ -130,6 +131,31 @@ public class GameManager : MonoBehaviour
             youLoseScreen.SetActive(true);
             
 
+        }
+    }
+
+
+    public void SetObjective(string newObjective)
+    {
+        if (keyObjective != null)
+        {
+            
+          
+                TMP_Text textComponent = keyObjective.GetComponent<TMP_Text>();
+                if (textComponent != null)
+                {
+                    textComponent.text = newObjective;
+                }
+                else
+                {
+                    Debug.LogWarning("No TMP_Text component found on GameObject.");
+                }
+            
+            
+        }
+        else
+        {
+            Debug.LogWarning("GameObject not assigned in GameManager.");
         }
     }
 
