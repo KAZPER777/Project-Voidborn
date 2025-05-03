@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.Rendering.LookDev;
 
 public class GameManager : MonoBehaviour
 {
@@ -46,6 +47,10 @@ public class GameManager : MonoBehaviour
 	public Image sanityBar;
     public TextMeshProUGUI pagesCollectedText;
     public TextMeshProUGUI interactionPromptText;
+    public Image fadePanel;
+    public GameObject startScreenCanvas;
+    public float fadeDuration = 1f;
+
 
     [Header("Pause Menu")]
     public GameObject pauseMenuUI;
@@ -270,6 +275,31 @@ public class GameManager : MonoBehaviour
         flashlightFaded = true;
         flashlightPromptText.gameObject.SetActive(false);
        
+    }
+
+    public void BeginStartSequence()
+    {
+        StartCoroutine(FadeOutAndStart());
+    }
+
+    private IEnumerator FadeOutAndStart()
+    {
+        fadePanel.gameObject.SetActive(true);
+        fadePanel.color = new Color(0, 0, 0, 0);
+
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            fadePanel.color = new Color(0, 0, 0, elapsed / fadeDuration);
+            yield return null;
+        }
+
+        // Only disable after fade finishes
+        if (startScreenCanvas != null)
+            startScreenCanvas.SetActive(false);
+
+        StartGame();
     }
 
 }
