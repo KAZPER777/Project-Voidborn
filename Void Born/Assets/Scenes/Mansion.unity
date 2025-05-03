@@ -29790,9 +29790,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5825221148752148929, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2127208868}
-    - targetCorrespondingSourceObject: {fileID: 5825221148752148929, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2127208872}
   m_SourcePrefab: {fileID: 100100000, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
 --- !u!4 &1061248428 stripped
 Transform:
@@ -34003,7 +34000,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1218716547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34026,7 +34023,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 20
+    m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
@@ -34037,7 +34034,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: key
+  m_Text: Press E to pick up key
 --- !u!222 &1218716548
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -56093,7 +56090,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.2, y: 0.19, z: 0.11}
+  m_Size: {x: 0.29, y: 0.37, z: 0.29}
   m_Center: {x: -0.02868834, y: -0.000019079542, z: -6.778414e-20}
 --- !u!114 &1925819494
 MonoBehaviour:
@@ -57893,8 +57890,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.90154415, y: 0.7108686, z: 0.287057}
-  m_Center: {x: 0.000082114915, y: 0.35543436, z: 0.012040943}
+  m_Size: {x: 0.90154415, y: 0.7108686, z: 0.26}
+  m_Center: {x: 0.000082114915, y: 0.35543436, z: -0.01}
 --- !u!1 &2006444947
 GameObject:
   m_ObjectHideFlags: 0
@@ -61749,14 +61746,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2abf9b381d44ff9489a6908b04fbe24b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!81 &2127208872
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1061248429}
-  m_Enabled: 1
 --- !u!1001 &2133283516
 PrefabInstance:
   m_ObjectHideFlags: 0

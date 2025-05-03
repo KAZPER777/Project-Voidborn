@@ -4,17 +4,34 @@ public class soundManager : MonoBehaviour
 {
     public static soundManager instance;
 
-    [SerializeField] private AudioSource soundPrefab;
+    [SerializeField] private string soundPrefabPath = "Prefabs/SoundPrefab";
+    private AudioSource soundPrefab;
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // Optional but recommended
+            DontDestroyOnLoad(gameObject);
+
+            LoadSoundPrefab(); // Load prefab once
         } else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void LoadSoundPrefab()
+    {
+        GameObject prefabGO = Resources.Load<GameObject>(soundPrefabPath);
+        if (prefabGO != null)
+        {
+            soundPrefab = prefabGO.GetComponent<AudioSource>();
+        }
+
+        if (soundPrefab == null)
+        {
+            Debug.LogError("Failed to load soundPrefab from Resources!");
         }
     }
 
@@ -22,7 +39,7 @@ public class soundManager : MonoBehaviour
     {
         if (soundPrefab == null)
         {
-            Debug.LogError("❌ Sound Prefab is not assigned in SoundManager!");
+            Debug.LogError("Sound Prefab is not assigned or failed to load in SoundManager!");
             return;
         }
 
