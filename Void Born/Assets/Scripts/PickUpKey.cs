@@ -44,7 +44,6 @@ public class PickUpKey : MonoBehaviour
                     invOB.SetActive(true);
                     pickUpText.SetActive(false);
                     keyPickedUp = true;
-                    Debug.Log("[PickUpKey] Key picked up!");
                 }
             }
             else

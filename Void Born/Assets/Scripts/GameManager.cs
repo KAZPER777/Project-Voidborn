@@ -23,6 +23,13 @@ public class GameManager : MonoBehaviour
     public JaidensPlayerController playerScript;
     public Transform playerSpawnPos;
 
+    [Header("Page Tracking")]
+    public int totalPages = 7;
+    private int pagesCollected = 0;
+
+    [Header("Gate")]
+    public GameObject endingGate;
+
     [Header("UI Elements")]
     public GameObject winMenuUI;
     public GameObject checkpointPopup;
@@ -31,6 +38,8 @@ public class GameManager : MonoBehaviour
     public GameObject youLoseScreen;
     public Slider playerHPBar;
 	public Image sanityBar;
+    public TextMeshProUGUI pagesCollectedText;
+    public TextMeshProUGUI interactionPromptText;
 
     [Header("Pause Menu")]
     public GameObject pauseMenuUI;
@@ -51,7 +60,6 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject); // Optional if you switch scenes
         } else
         {
             Destroy(gameObject);
@@ -64,6 +72,13 @@ public class GameManager : MonoBehaviour
         {
             PauseGame();
         }
+    }
+
+    private void Start()
+    {
+        totalPages = Object.FindObjectsByType<PagePickup>(FindObjectsSortMode.None).Length;
+
+        UpdatePagesUI();
     }
 
     public void StartGame()
@@ -167,13 +182,13 @@ public class GameManager : MonoBehaviour
             Instantiate(playerPrefab, playerSpawnPos.position, playerSpawnPos.rotation);
         } else
         {
-            Debug.LogWarning("⚠️ Missing playerPrefab or playerSpawnPos!");
+            Debug.LogWarning(" Missing playerPrefab or playerSpawnPos!");
         }
     }
 
     public void WinGame()
     {
-        Debug.Log("🏆 You Win!");
+        Debug.Log("You Win!");
         CurrentState = GameState.Win;
 
         if (winMenuUI != null)
@@ -189,5 +204,34 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    public void CollectPage()
+    {
+        pagesCollected++;
+        UpdatePagesUI();
+
+        if (pagesCollected >= totalPages)
+        {
+            UnlockEnding();
+        }
+    }
+
+    private void UpdatePagesUI()
+    {
+        if (pagesCollectedText != null)
+        {
+            pagesCollectedText.text = $"Pages Collected: {pagesCollected} / {totalPages}";
+        }
+    }
+
+    private void UnlockEnding()
+    {
+        Debug.Log("All pages collected — unlocking gate!");
+        if (endingGate != null)
+        {
+            Collider col = endingGate.GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+        }
     }
 }
