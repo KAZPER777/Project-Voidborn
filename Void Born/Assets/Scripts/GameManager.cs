@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     [Header("Pause Menu")]
     public GameObject pauseMenuUI;
     public GameObject hudUI;
+    public GameObject controlsPanel;
 
     private bool isPaused = false;
     public bool gameStarted = false;
@@ -66,7 +67,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        Debug.Log("🚀 Game Started!");
+        Debug.Log("Game Started!");
         CurrentState = GameState.Playing;
 
         // ✅ Correctly reset HP bar
@@ -98,6 +99,18 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    public void OpenControls()
+    {
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (controlsPanel != null) controlsPanel.SetActive(true);
+    }
+
+    public void CloseControls()
+    {
+        if (controlsPanel != null) controlsPanel.SetActive(false);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
+    }
+
     public void ResumeGame()
     {
         pauseMenuUI.SetActive(false);
@@ -109,7 +122,7 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
-        Debug.Log("🏁 Game Over");
+        Debug.Log("Game Over");
         CurrentState = GameState.GameOver;
 
         if (youLoseScreen != null)
