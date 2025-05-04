@@ -35,6 +35,7 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
     [Header("Sanity Timers")]
     public float sanityTimer;
     public float attackTimer;
+    private float sanityRegenTimer = 10f;
 
     [Header("Teleportation")]
     public int teleportSphereRadius;
@@ -101,9 +102,11 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
 
     public void LookingAtDemon(int amount)
     {
+        
         if (visiblity.isVisible && CheckVisibility())
         {
             sanityTimer -= Time.deltaTime;
+            sanityRegenTimer = 10f;
 
             if (sanityTimer <= 0)
             {
@@ -116,7 +119,14 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
         }
         else
         {
+            sanityRegenTimer -= Time.deltaTime;
             sanityTimer = 1f;
+
+            if (sanityRegenTimer <= 0 && player.currentSanity < player.maxSanity)
+            {
+                player.currentSanity += Time.deltaTime;
+                GameManager.Instance.sanityBar.fillAmount = (float)player.currentSanity / player.maxSanity;
+            }
             PauseStareSound();
         }
     }
