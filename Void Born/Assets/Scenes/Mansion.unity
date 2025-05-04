@@ -32546,6 +32546,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 7174d2b10436a274ea773f6d2d81831e, type: 3}
     - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
+      propertyPath: crawlSpeed
+      value: 0.103859864
+      objectReference: {fileID: 0}
+    - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: sprintClip
       value: 
       objectReference: {fileID: 8300000, guid: 322b03685dc609043a9e5a8799cd365d, type: 3}
@@ -32555,7 +32559,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: vaultDuration
-      value: 0.7
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: fullSprintMult
