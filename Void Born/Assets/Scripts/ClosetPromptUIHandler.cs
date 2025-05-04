@@ -1,39 +1,30 @@
 using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 
 public class ClosetPromptUIHandler : MonoBehaviour
 {
-    public GameObject promptPanel; // The full panel with icon + text
-    public ClosetDoorMaster closetDoor;
-    public Transform player;
-    public Transform closetTriggerPoint;
-    public float triggerDistance = 2f;
+    public static ClosetPromptUIHandler Instance;
 
-    private bool isNearCloset = false;
+    [SerializeField] private GameObject promptUI;
+    [SerializeField] private TMPro.TextMeshProUGUI promptText;
 
-    void Update()
+    private void Awake()
     {
-        if (!closetDoor) return;
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
 
-        float distance = Vector3.Distance(player.position, closetTriggerPoint.position);
-        isNearCloset = distance <= triggerDistance;
-
-        if (isNearCloset && !IsPlayerInside())
-        {
-            promptPanel.SetActive(true);
-        } else if (IsPlayerInside())
-        {
-            promptPanel.SetActive(true);
-            // Optional: change text to "Mouse 2 to exit" etc.
-        } else
-        {
-            promptPanel.SetActive(false);
-        }
+        promptUI.SetActive(false);
     }
 
-    bool IsPlayerInside()
+    public void ShowPrompt(string message)
     {
-        return closetDoor.GetType().GetField("isPlayerInside", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(closetDoor) is bool inside && inside;
+        promptText.text = message;
+        promptUI.SetActive(true);
+    }
+
+    public void HidePrompt()
+    {
+        promptUI.SetActive(false);
     }
 }

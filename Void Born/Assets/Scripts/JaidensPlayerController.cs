@@ -200,7 +200,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
     private void HandleJumpOrStand()
     {
-        if (currentState == MovementState.Crouching || currentState == MovementState.Crawling)
+        if (currentState == MovementState.Crouching || currentState == MovementState.Crawling && CanStandUp())
         {
             TransitionToState(MovementState.Standing, standingHeight, baseWalkSpeed);
         }
@@ -208,6 +208,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
     private void HandleCrouch()
     {
+        if (!controller.enabled || isVaulting) return;
         if (!Input.GetButtonDown("Crouch")) return;
 
         switch (currentState)
@@ -226,6 +227,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
 
     private void HandleCrawl()
     {
+        if (!controller.enabled || isVaulting) return;
+
         if (!Input.GetButtonDown("Crawl")) return;
 
         switch (currentState)
@@ -277,7 +280,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.enabled = true;
         canMove = true;
         isVaulting = false;
-        soundManager.instance.playSound(jumpClip, transform, 1f);
+        audios.PlayOneShot(jumpClip, 1f);
     }
 
     private void ApplyGravity()
@@ -288,11 +291,21 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.Move(playerVel * Time.deltaTime);
     }
 
-    private void SetHeight(float height)
+    private void SetHeight(float newHeight)
     {
-        controller.height = height;
-        controller.center = new Vector3(0f, height / 2f, 0f);
+        if (!controller.enabled || isVaulting) return;
 
+        float previousHeight = controller.height;
+        Vector3 bottom = transform.position - Vector3.up * (previousHeight * 0.5f - controller.center.y);
+
+        // Apply new height and center while preserving foot position
+        controller.height = newHeight;
+        controller.center = new Vector3(0f, newHeight / 2f, 0f);
+
+        // Move the controller so feet stay at the same world position
+        transform.position = bottom + Vector3.up * (newHeight * 0.5f - controller.center.y);
+
+        // Adjust visuals
         if (visualHolder != null)
         {
             float offsetY = currentState switch
@@ -305,6 +318,16 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
             visualHolder.localPosition = new Vector3(0f, offsetY, 0f);
         }
     }
+
+    private bool CanStandUp()
+    {
+        Vector3 start = transform.position + Vector3.up * (controller.radius + 0.05f);
+        float checkDistance = standingHeight - controller.height;
+        return !Physics.SphereCast(start, controller.radius, Vector3.up, out _, checkDistance);
+    }
+
+
+
 
     private void TransitionToState(MovementState newState, float newHeight, float newSpeed)
     {

@@ -3,8 +3,6 @@ using System.Collections;
 
 public class ClosetDoorMaster : MonoBehaviour
 {
-   public static ClosetDoorMaster instance;
-
     [Header("Door")]
     public Transform openPosition;
     public Transform closedPosition;
@@ -20,9 +18,19 @@ public class ClosetDoorMaster : MonoBehaviour
     public float moveSpeed = 3f;
     public float rotateSpeed = 5f;
 
+    [Header("Peek Door Animation")]
+    public float peekDoorOpenAmount = 0.15f;
+    public float peekDoorSpeed = 2f;
+    public float peekRotationAngle = 15f;
+    public float peekRotationSpeed = 5f;
+    
     [Header("Peek")]
     public float peekDistance = 0.5f;
     public float peekSpeed = 4f;
+    private bool isPeeking = false;
+    private Quaternion originalRotation;
+    private Vector3 originalDoorPosition;
+
 
     [Header("Interaction Check")]
     public Transform triggerPoint;
@@ -31,6 +39,9 @@ public class ClosetDoorMaster : MonoBehaviour
     [Header("Enemy AI")]
     [SerializeField] private StalkerAI stalker;
     public bool canWatcherMove = true;
+
+    [Header("Prompt UI")]
+    [SerializeField] private string promptText = "Press LMB to enter closet";
 
     private enum DoorState { Closed, Opening, OpenWaiting, Closing }
     private DoorState doorState = DoorState.Closed;
@@ -46,15 +57,18 @@ public class ClosetDoorMaster : MonoBehaviour
     private Vector3 cameraDefaultPos;
     private Vector3 cameraTargetPos;
 
+    public static ClosetDoorMaster ActivePromptCloset;
+
     void Start()
     {
         cameraDefaultPos = cameraRig.localPosition;
         cameraTargetPos = cameraDefaultPos;
+        originalRotation = player.transform.rotation;
+        originalDoorPosition = transform.position;
     }
 
     void Update()
     {
-        // Proximity + Look Check
         float distance = Vector3.Distance(player.transform.position, triggerPoint.position);
         bool isCloseEnough = distance <= triggerDistance;
 
@@ -66,9 +80,22 @@ public class ClosetDoorMaster : MonoBehaviour
                 isLookingAtCloset = true;
         }
 
-        // Reset exitCooldown
         if (exitCooldown > 0f)
             exitCooldown -= Time.deltaTime;
+
+        // Show or hide prompt
+        if (isCloseEnough && isLookingAtCloset && !isPlayerInside && doorState == DoorState.Closed)
+        {
+            if (ActivePromptCloset == null || ActivePromptCloset == this)
+            {
+                ActivePromptCloset = this;
+                ClosetPromptUIHandler.Instance?.ShowPrompt(promptText);
+            }
+        } else if (ActivePromptCloset == this)
+        {
+            ClosetPromptUIHandler.Instance?.HidePrompt();
+            ActivePromptCloset = null;
+        }
 
         // Input: Try Enter or Exit
         if (Input.GetMouseButtonDown(0) && exitCooldown <= 0f)
@@ -114,9 +141,8 @@ public class ClosetDoorMaster : MonoBehaviour
                 isEntering = false;
                 isPlayerInside = true;
                 EnablePlayerMovement(true);
-                //check watcher stuff
                 canWatcherMove = false;
-                stalker.CantSeePlayer();
+                stalker?.CantSeePlayer();
             }
         }
 
@@ -135,18 +161,43 @@ public class ClosetDoorMaster : MonoBehaviour
             }
         }
 
-        // Peeking inside closet
+        // Peeking
         if (isPlayerInside && !isEntering && !isExiting)
         {
-            if (Input.GetKey(KeyCode.Q))
-                cameraTargetPos = cameraDefaultPos + Vector3.left * peekDistance;
-            else if (Input.GetKey(KeyCode.E))
-                cameraTargetPos = cameraDefaultPos + Vector3.right * peekDistance;
-            else
-                cameraTargetPos = cameraDefaultPos;
+            if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E))
+            {
+                isPeeking = true;
 
-            cameraRig.localPosition = Vector3.Lerp(cameraRig.localPosition, cameraTargetPos, Time.deltaTime * peekSpeed);
+                // Slightly open the door
+                Vector3 peekDoorTarget = originalDoorPosition + transform.right * peekDoorOpenAmount;
+                transform.position = Vector3.Lerp(transform.position, peekDoorTarget, Time.deltaTime * peekDoorSpeed);
+
+                // Rotate player to look forward
+                Quaternion peekRot = Quaternion.LookRotation(transform.forward);
+                player.transform.rotation = Quaternion.Slerp(player.transform.rotation, peekRot, Time.deltaTime * peekRotationSpeed);
+
+                // Shift camera
+                if (Input.GetKey(KeyCode.Q))
+                    cameraTargetPos = cameraDefaultPos + Vector3.left * peekDistance;
+                else if (Input.GetKey(KeyCode.E))
+                    cameraTargetPos = cameraDefaultPos + Vector3.right * peekDistance;
+
+                cameraRig.localPosition = Vector3.Lerp(cameraRig.localPosition, cameraTargetPos, Time.deltaTime * peekSpeed);
+            } else if (isPeeking)
+            {
+                isPeeking = false;
+
+                // Reset door
+                transform.position = Vector3.Lerp(transform.position, originalDoorPosition, Time.deltaTime * peekDoorSpeed);
+
+                // Reset player rotation
+                player.transform.rotation = Quaternion.Slerp(player.transform.rotation, originalRotation, Time.deltaTime * peekRotationSpeed);
+
+                // Reset camera
+                cameraRig.localPosition = Vector3.Lerp(cameraRig.localPosition, cameraDefaultPos, Time.deltaTime * peekSpeed);
+            }
         }
+
     }
 
     IEnumerator WaitAndCloseDoor()
