@@ -130,11 +130,17 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
+        if(youLoseScreen == null) { 
         pauseMenuUI.SetActive(true);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         CurrentState = GameState.Paused;
         Time.timeScale = 0f;
+        }
+        else
+        {
+            pauseMenuUI.SetActive(false);
+        } 
     }
 
     public void OpenControls()
