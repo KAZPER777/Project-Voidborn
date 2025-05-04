@@ -29,7 +29,7 @@ public class StalkerAI : MonoBehaviour
     public float ragePauseDuration = 2.61f;
     public float stareDurationThreshold = 3f;
     private float currentStareTime = 0f;
-    private float stalkTimer = 1f;
+    [SerializeField]private float stalkTimer = 4f;
     private float animationReset = 1.5f;
 
     //Damage
@@ -46,6 +46,16 @@ public class StalkerAI : MonoBehaviour
 
     private float roamTimer = 0f;
     private Vector3 roamDestination;
+
+    //Footsteps
+    public AudioClip[] footstepSounds;
+    public float footstepInterval = 0.8f; // time between footsteps
+    private float footstepTimer = 0f;
+    private int footstepIndex = 0;
+    //Raged Footsteps
+    public float rageFootstepInterval = 0.3f;
+    private float rageFootstepTimer = 0f;
+    private int rageFootstepIndex = 0;
 
 
     // State tracking
@@ -113,7 +123,7 @@ public class StalkerAI : MonoBehaviour
             if (isPlayerStaring)
             {
                 currentStareTime += Time.deltaTime;
-
+                Debug.Log("Player is staring...");
                 if (currentStareTime >= stareDurationThreshold)
                 {
                     animator.SetBool("isMoving", false);
@@ -163,6 +173,8 @@ public class StalkerAI : MonoBehaviour
             }
 
             damageTimer -= Time.deltaTime;
+
+
         }
 
         //checks if rage and chasing isnt true. Allows Stalker to roam to a random desination
@@ -187,7 +199,35 @@ public class StalkerAI : MonoBehaviour
         {
             animator.SetBool("isMoving", false);
         }
+
+
+        // Play footstep sounds if moving
+        if (agent.velocity.magnitude > 0.1f && agent.remainingDistance > agent.stoppingDistance && !hasRaged)
+        {
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer <= 0f && footstepSounds.Length > 0)
+            {
+                source.PlayOneShot(footstepSounds[footstepIndex], 0.6f);
+
+                footstepIndex = (footstepIndex + 1) % footstepSounds.Length; // cycle through 0 - 7
+                footstepTimer = footstepInterval;
+            }
+        }
+
+        if (agent.velocity.magnitude > 0.1f && agent.remainingDistance > agent.stoppingDistance && hasRaged)
+        {
+            rageFootstepTimer -= Time.deltaTime;
+            if (rageFootstepTimer <= 0f && footstepSounds.Length > 0)
+            {
+                source.PlayOneShot(footstepSounds[rageFootstepIndex], 0.8f);
+
+                rageFootstepIndex = (rageFootstepIndex + 1) % footstepSounds.Length; // cycle through 0 - 7
+                rageFootstepTimer = rageFootstepInterval;
+            }
+        }
+
     }
+
 
     //When attack animation ends it executes this method
     public void OnAttackAnimationEnd()
@@ -299,7 +339,7 @@ public class StalkerAI : MonoBehaviour
     {
         hasRaged = false;
         isChasing = false;
-        stalkTimer = 1f;
+        stalkTimer = 10f;
         if (agent.velocity.magnitude > 0.1f && agent.remainingDistance > agent.stoppingDistance)
         {
             agent.speed = 4;
