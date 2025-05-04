@@ -35,7 +35,7 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
     [Header("Sanity Timers")]
     public float sanityTimer;
     public float attackTimer;
-    private float sanityRegenTimer = 10f;
+    private float sanityRegenTimer = 20f;
 
     [Header("Teleportation")]
     public int teleportSphereRadius;
@@ -106,7 +106,7 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
         if (visiblity.isVisible && CheckVisibility())
         {
             sanityTimer -= Time.deltaTime;
-            sanityRegenTimer = 10f;
+            sanityRegenTimer = 20f;
 
             if (sanityTimer <= 0)
             {
