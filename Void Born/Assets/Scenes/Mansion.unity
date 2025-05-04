@@ -32546,6 +32546,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 7174d2b10436a274ea773f6d2d81831e, type: 3}
     - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
+      propertyPath: crawlSpeed
+      value: 0.103859864
+      objectReference: {fileID: 0}
+    - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: sprintClip
       value: 
       objectReference: {fileID: 8300000, guid: 322b03685dc609043a9e5a8799cd365d, type: 3}
@@ -32555,7 +32559,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: vaultDuration
-      value: 0.7
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7168153559634591368, guid: ff7239a1565e0094f8ae8dba99ecb885, type: 3}
       propertyPath: fullSprintMult
@@ -41723,7 +41727,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 9a9969b0e8faf8d459c94028c4b5f6bf, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9a9969b0e8faf8d459c94028c4b5f6bf, type: 3}
       propertyPath: m_LocalScale.x
@@ -61998,7 +62002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6178141462974762782, guid: 72e79e7af2bcdb847bc2b6540d376769, type: 3}
       propertyPath: m_text
-      value: 'Find The Correct Front Door Key: 0/1'
+      value: 'Find The Front Door Key: 0/1'
       objectReference: {fileID: 0}
     - target: {fileID: 6178141462974762782, guid: 72e79e7af2bcdb847bc2b6540d376769, type: 3}
       propertyPath: m_fontSize

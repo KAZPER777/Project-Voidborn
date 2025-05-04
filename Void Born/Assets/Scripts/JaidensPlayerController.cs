@@ -16,8 +16,8 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
     private float sprintSoundCooldown = 1f; 
 
     [Header("Sanity")]
-    public int maxSanity;
-    public int currentSanity;
+    public float maxSanity;
+    public float currentSanity;
 
     [Header("Sprint Timing")]
     [SerializeField] private float sprintRampUpTime = 1.0f;
