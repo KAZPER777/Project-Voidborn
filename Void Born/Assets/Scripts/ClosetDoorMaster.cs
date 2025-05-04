@@ -116,6 +116,7 @@ public class ClosetDoorMaster : MonoBehaviour
                 EnablePlayerMovement(true);
                 //check watcher stuff
                 canWatcherMove = false;
+                stalker.CantSeePlayer();
             }
         }
 
