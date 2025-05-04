@@ -21,6 +21,7 @@ public class BatteryUIManager : MonoBehaviour
 
         UpdateSegments();
         UpdateLowBatteryWarning();
+        UpdateBatteryIconVisibility();
     }
 
     private void UpdateSegments()
@@ -86,4 +87,20 @@ public class BatteryUIManager : MonoBehaviour
         if (lastSegment != null)
             lastSegment.color = normalColor;
     }
+
+    private void UpdateBatteryIconVisibility()
+    {
+        if (batteryFill == null) return;
+
+        if (batterySystem.CurrentBattery <= 0.01f)
+        {
+            batteryFill.gameObject.SetActive(false);
+        }
+        else
+        {
+            batteryFill.gameObject.SetActive(true);
+        }
+    }
+
+
 }

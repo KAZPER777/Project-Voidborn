@@ -9,7 +9,7 @@ public class CamcorderToggle : MonoBehaviour
     {
         if (!GameManager.Instance.gameStarted) return; 
 
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.V))
         {
             camcorderActive = !camcorderActive;
             if (camcorderUI != null)
