@@ -61998,7 +61998,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6178141462974762782, guid: 72e79e7af2bcdb847bc2b6540d376769, type: 3}
       propertyPath: m_text
-      value: 'Find The Correct Front Door Key: 0/1'
+      value: 'Find The Front Door Key: 0/1'
       objectReference: {fileID: 0}
     - target: {fileID: 6178141462974762782, guid: 72e79e7af2bcdb847bc2b6540d376769, type: 3}
       propertyPath: m_fontSize
