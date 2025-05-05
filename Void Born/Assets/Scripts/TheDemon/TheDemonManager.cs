@@ -290,7 +290,8 @@ public class TheDemonManager : MonoBehaviour //The purpose of this class is to b
         if (!isAttacking) 
         {
             isAttacking = true;
-            player.TakeDamage(attackDamage); 
+            player.TakeDamage(attackDamage);
+            GameManager.Instance.playerHPBar.fillAmount = player.currentHealth / player.maxHealth;
             Debug.Log("Player has been attacked by the Demon!");
         }
     }

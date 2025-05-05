@@ -16,6 +16,7 @@ public class StalkerAI : MonoBehaviour
     public CheckVisiblity check;
     public Renderer eyeRenderer;
     public Collider monsterCollider;
+    public JaidensPlayerController jaidensPlayer;
     public CharacterController playerController;
     public LayerMask player;
     private Color originalEmissionColor;
@@ -236,10 +237,10 @@ public class StalkerAI : MonoBehaviour
         {
 
             damageable.TakeDamage(damageAmount);
-            animator.SetBool("isAttacking", false);
-            animator.SetBool("isEnraged", false);
-            
+            GameManager.Instance.playerHPBar.fillAmount = jaidensPlayer.currentHealth / jaidensPlayer.maxHealth;
         }
+        animator.SetBool("isAttacking", false);
+        animator.SetBool("isEnraged", false);
     }
 
     void TriggerRage()

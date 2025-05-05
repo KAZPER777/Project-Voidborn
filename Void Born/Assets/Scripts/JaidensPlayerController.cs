@@ -390,7 +390,7 @@ public class JaidensPlayerController : MonoBehaviour, IDamageable
         controller.enabled = true;
 
         if (GameManager.Instance != null && GameManager.Instance.playerHPBar != null)
-            GameManager.Instance.playerHPBar.value = 1f;
+            GameManager.Instance.playerHPBar.fillAmount = 1f;
     }
 
 }

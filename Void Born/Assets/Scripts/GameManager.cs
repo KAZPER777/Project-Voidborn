@@ -43,7 +43,8 @@ public class GameManager : MonoBehaviour
     public GameObject keyObjective; //for key objective
     public GameObject playerDamageScreen;
     public GameObject youLoseScreen;
-    public Slider playerHPBar;
+
+    public Image playerHPBar;
 	public Image sanityBar;
     public TextMeshProUGUI pagesCollectedText;
     public TextMeshProUGUI interactionPromptText;
@@ -106,10 +107,9 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Started!");
         CurrentState = GameState.Playing;
 
-        // ✅ Correctly reset HP bar
         if (playerHPBar != null)
         {
-            playerHPBar.value = playerHPBar.maxValue;
+            playerHPBar.fillAmount = 1f; 
         }
 
         if (playerDamageScreen != null)

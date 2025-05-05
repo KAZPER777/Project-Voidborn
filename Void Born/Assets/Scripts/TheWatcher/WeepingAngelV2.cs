@@ -11,6 +11,7 @@ public class WeepingAngelV2 : MonoBehaviour
     public NavMeshAgent agent;
     public Animator animate;
     public Transform playerTransform;
+    public JaidensPlayerController player;
     public CheckWatcher visibilityCheck;
     public AudioSource audioSource;
     public AudioClip[] watcherSounds;
@@ -94,11 +95,12 @@ public class WeepingAngelV2 : MonoBehaviour
                 {
                     damageable.TakeDamage(damageAmount);
 
-                    animate.SetBool(IS_ATTACKING, true);
 
+                    GameManager.Instance.playerHPBar.fillAmount = player.currentHealth / player.maxHealth;
                     canDamage = false;
                     damageTime = damageDelay;
                 }
+                animate.SetBool(IS_ATTACKING, true);
             }
             else
             {
