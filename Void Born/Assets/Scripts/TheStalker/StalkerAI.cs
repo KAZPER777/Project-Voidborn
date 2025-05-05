@@ -93,7 +93,7 @@ public class StalkerAI : MonoBehaviour
 
         bool isPlayerStaring = false;
 
-        if (Physics.Raycast(ray, out hit, 200f)) // distance threshold for how far player can trigger Stalker Rage
+        if (Physics.Raycast(ray, out hit, 60f)) // distance threshold for how far player can trigger Stalker Rage
         {
             if (hit.collider == monsterCollider)
             {
